@@ -6,61 +6,424 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 
-![5 themes preview](./public/sample-cover.svg)
+---
+
+## 這個專案能幫你做什麼？
+
+- 婚禮前印一張 QR Code 大牌，賓客掃描後輸入「姓名」和「電話」就能看到 **專屬於自己的祝福卡**
+- 每張卡可以放：對方的客製化文字、對方的相片（0 ~ 多張）、5 種顏色主題擇一
+- 看卡前會先有一個 **信封 3D 翻轉動畫**，賓客點一下，信封打開、卡片浮起來
+- 卡片可以下載成圖，或寄到自己的 email 收藏
+
+> 📺 影片預覽：可以參考 `.demo-video/output/wedding-card-demo.webm`（39 秒完整流程）
 
 ---
 
-## 兩種使用方式
+## 你有兩種選擇
 
-### 🚀 方式一：直接用我做好的 SaaS 服務（懶人首選）
+### 選項 A：不寫程式，用我做的 SaaS 服務（5 分鐘上線）
 
-如果你不想自己跑程式碼、不想處理部署，可以直接用我做的 SaaS 服務：
+👉 **[card.oharalab.com](https://card.oharalab.com)**
 
-**👉 [card.oharalab.com](https://card.oharalab.com)**
+- 不用懂程式、不用裝任何東西
+- 後台直接填賓客資料、上傳照片
+- 內建 Excel 匯入、QR Code 產生、Email 寄送
 
-- 不用懂 coding，直接後台填賓客資料
-- 內建主題編輯器、Excel 匯入、QR Code 產生
-- 進階方案含 Email 寄送、卡片下載、自訂網域
+如果你只是想辦個婚禮、不想花時間搞技術，**直接用 SaaS 就好**。
 
-### 🛠 方式二：自己 fork 這個 repo 改（DIY 工程師款）
+### 選項 B：自己 fork 這個 repo 改（DIY 工程師款，免費）
 
-如果你會一點程式（或想學），這個 repo 完整開源，可以 fork 回去改成自己想要的版本。本文檔接下來都是給這條路徑用的。
+如果你會一點程式（或想學、或想丟給 AI 幫你做），這個 repo 是完整開源的，可以拿去改成自己想要的版本。
 
-> ⚠️ **此 repo 為公開範例版**：所有賓客資料、訊息文字、圖片皆為示範用途，請於部署前替換為自己的內容。原本婚禮上的真實內容（我們親手寫給家人朋友的卡片）並未包含在此 repo 中。
+下面所有的說明都是為「選項 B」寫的。
 
----
-
-## 功能總覽
-
-- ✅ **姓名＋電話雙重驗證**：兩項都對才能看卡
-- ✅ **5 種淡色主題**：classic（粉黃）、rose（粉紅）、midnight（粉藍）、spring（粉綠）、luxe（粉橘）
-- ✅ **信封 3D 翻轉動畫**：純 CSS，行動裝置流暢
-- ✅ **圖片支援**：0 張、1 張（居中）、2+ 張（雙列網格）
-- ✅ **花瓣粒子動畫**：登入頁背景特效
-- ✅ **Email 寄送 + 卡片下載**：賓客可下載卡片或寄到 email
-- ✅ **安全防護**：Rate Limiting、Honeypot 反爬蟲、輸入驗證、XSS 防護
-- ✅ **響應式設計**：手機 / 平板 / 桌面
-- ✅ **零雲端依賴**：本機開發即可跑完整流程
+> ⚠️ **此 repo 為公開範例版**：所有賓客資料、訊息文字、圖片都是示範用途，請於部署前替換為自己的內容。我自己婚禮上的真實內容（親手寫給家人朋友的卡片）並未包含在此 repo 中。
 
 ---
 
-## 快速開始（5 分鐘看到範例）
+## 給 AI 助手的快速摘要
+
+> 如果你（人類使用者）打算把這個 repo 丟給 AI（Claude / GPT / Cursor / Copilot 等）幫你完成自訂與部署，可以把下面這段話貼給 AI 作為任務描述：
+
+```
+我有一個 Next.js 16 婚禮卡片網站 fork 自 darrenlu86/wedding-guest-cards-public。
+請依照 README.md 的「Step 1 ~ Step 3」幫我完成以下工作：
+
+1. 把 public/photos/ 底下的賓客照片，依照 data/guests.xlsx 的內容
+   引用到對應賓客的 customization.images 欄位
+2. 跑 `npm run import:guests` 把 Excel 轉成 lib/guests.json
+3. 修改 lib/init.ts 從 guests.json 載入（而不是 seedTestData）
+4. 把所有「Alex & Jamie」替換成我提供的新人名稱（中英都改）
+5. 把所有「your-domain.example.com」替換成我提供的網域
+6. 跑 `npm run build` 確認沒有錯誤
+7. 告訴我怎麼部署到 Vercel
+```
+
+AI 應該能直接照著 README 中的檔案路徑與指令完成上述任務。下面所有路徑都是 **絕對精確** 的，不需要猜。
+
+---
+
+## Step 0：環境準備（5 分鐘）
+
+### 0-1. 安裝 Node.js
+
+如果你還沒有 Node.js，到 [nodejs.org](https://nodejs.org/) 下載最新 LTS 版本安裝。
+
+驗證安裝：
 
 ```bash
-# 1. clone
+node --version    # 應該看到 v20.x 或 v22.x 以上
+npm --version     # 應該看到 10.x 以上
+```
+
+### 0-2. Clone 這個 repo
+
+```bash
 git clone https://github.com/darrenlu86/wedding-guest-cards-public.git
 cd wedding-guest-cards-public
+```
 
-# 2. 安裝依賴
+### 0-3. 安裝依賴 + 啟動
+
+```bash
 npm install
-
-# 3. 啟動開發伺服器
 npm run dev
 ```
 
-瀏覽器開啟 [http://localhost:3000](http://localhost:3000)，輸入下方範例帳號中任一組即可體驗。
+瀏覽器自動打開（或手動開）[http://localhost:3000](http://localhost:3000)，輸入：
+- 姓名：`小明`
+- 電話：`0912000001`
 
-### 範例帳號（10 組）
+點「查看感謝小卡」，就能看到完整流程。
+
+---
+
+## Step 1：把照片放到 `public/photos/`
+
+### 1-1. 照片要放在這個資料夾
+
+```
+專案根目錄/
+└── public/
+    └── photos/              ← 你的所有賓客照片放這裡
+        ├── 王小明.jpg
+        ├── 01-李小華.jpg
+        └── ...
+```
+
+### 1-2. 命名建議
+
+| ✅ 推薦 | ❌ 不推薦 |
+|--------|----------|
+| `王小明.jpg` | `IMG_4523.jpg`（之後找不到誰是誰） |
+| `01-王小明.jpg` | `照片1.jpg` |
+| `John_Doe.png` | `pic.jpg` |
+
+中文檔名 OK，系統會自動處理。
+
+### 1-3. 支援格式與尺寸
+
+- 支援：`.jpg` / `.jpeg` / `.png` / `.webp` / `.svg` / `.avif`
+- 建議尺寸：800×600 以上（直/橫向皆可）
+
+### 1-4. 在資料裡引用照片時的路徑寫法
+
+```
+✅ 對：  /photos/王小明.jpg
+❌ 錯：  photos/王小明.jpg          （少了開頭斜線）
+❌ 錯：  public/photos/王小明.jpg    （不要加 public/）
+❌ 錯：  ./photos/王小明.jpg         （不要加點號）
+```
+
+多張照片，用逗號隔開（在 Excel 裡）或寫成陣列（在 JSON 裡）：
+
+- **Excel 寫法**：`/photos/01-王小明.jpg, /photos/02-王小明.jpg`
+- **JSON 寫法**：`["/photos/01-王小明.jpg", "/photos/02-王小明.jpg"]`
+
+---
+
+## Step 2：填賓客名單（Excel 流程）
+
+這是最不需要碰程式碼的方式。
+
+### 2-1. 打開模板
+
+```bash
+open data/guests-template.xlsx
+```
+
+或直接在檔案總管雙擊 `data/guests-template.xlsx`。
+
+### 2-2. 模板長這樣
+
+| 姓名 | 電話 | 祝福訊息 | 主題 | 圖片 |
+|------|------|----------|------|------|
+| 王小明 | 0912345678 | 親愛的小明，\n感謝你的陪伴... | classic | /photos/01-王小明.jpg |
+| 李小華 | 0987654321 | 親愛的小華，... | rose | /photos/02-李小華.jpg, /photos/02b-李小華.jpg |
+| John Doe | 0922222222 | Dear John,... | spring |  |
+
+**5 個欄位說明：**
+
+| 欄位 | 必填？ | 說明 |
+|------|--------|------|
+| **姓名** | ✅ 必填 | 用於登入驗證，需與賓客輸入完全一致 |
+| **電話** | 選填 | 沒填的話只用姓名驗證 |
+| **祝福訊息** | 選填 | 卡片中央顯示的內容。在 Excel 裡按 `Alt+Enter`（Windows）或 `Option+Enter`（Mac）換行 |
+| **主題** | 選填 | 五選一：`classic`（粉黃）/ `rose`（粉紅）/ `midnight`（粉藍）/ `spring`（粉綠）/ `luxe`（粉橘）。不填預設 classic |
+| **圖片** | 選填 | 一張或多張，多張用「半形逗號 + 空白」隔開。路徑要用 `/photos/檔名` 格式 |
+
+### 2-3. 另存為 `guests.xlsx`
+
+⚠️ **重要**：填完之後要 **另存新檔**，存成 `data/guests.xlsx`（不是 `guests-template.xlsx`）。
+
+### 2-4. 跑匯入指令
+
+```bash
+npm run import:guests
+```
+
+這個指令會：
+1. 讀取 `data/guests.xlsx`
+2. 驗證每一列（姓名是否填、主題是否合法等）
+3. 生成 `lib/guests.json`
+4. 印出匯入摘要（成功幾筆、警告幾筆、錯誤幾筆）
+
+### 2-5. 切換到「載入真實資料」模式
+
+打開 [`lib/init.ts`](./lib/init.ts)，把整個檔案內容替換成：
+
+```ts
+import { addGuest, getAllGuests } from './db';
+import { Guest } from '@/types/guest';
+import guestsData from './guests.json';
+
+let initialized = false;
+
+export async function ensureDataInitialized() {
+  if (initialized) return;
+  for (const guest of guestsData as Guest[]) {
+    await addGuest(guest);
+  }
+  initialized = true;
+  const guests = await getAllGuests();
+  console.log(`Loaded ${guests.length} guests from guests.json`);
+}
+```
+
+### 2-6. 重啟 dev server
+
+```bash
+# 在跑 npm run dev 的視窗按 Ctrl+C 停掉
+# 然後重新啟動
+npm run dev
+```
+
+打開 http://localhost:3000，用你 Excel 中的真實姓名測試 → 看到你的賓客卡片。✅
+
+> 📌 **不想用 Excel？** 可以直接編輯 [`lib/db.ts`](./lib/db.ts) 中的 `seedTestData()` 函式，把 10 組範例改成自己的賓客（適合 < 30 人的情況）。
+
+---
+
+## Step 3：自訂新人名稱、主題色、品牌
+
+### 3-1. 替換新人名稱（5 處）
+
+在以下 5 個檔案搜尋 `Alex & Jamie` 並替換成你們的名字：
+
+| 檔案 | 行號附近 | 改什麼 |
+|------|---------|--------|
+| [`app/layout.tsx`](./app/layout.tsx) | 第 5、12、15、16、29 行 | `SITE_TITLE`、`template`、`keywords`、`authors`、`alt` |
+| [`app/card/[guestId]/layout.tsx`](./app/card/[guestId]/layout.tsx) | 第 13、15、23、29 行 | OG meta 中的標題與描述 |
+| [`app/page.tsx`](./app/page.tsx) | 第 92 行 | 登入頁顯示的新人名稱 |
+| [`components/BlessingCard/index.tsx`](./components/BlessingCard/index.tsx) | 第 142 行 | 卡片簽名 |
+| [`lib/email.ts`](./lib/email.ts) | 第 4 行 | `SENDER_NAME`（寄信用） |
+
+**快速一次改完**（macOS / Linux）：
+
+```bash
+# 把 Alex & Jamie 全部換成「小明 & 小華」
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) -not -path "./node_modules/*" \
+  -exec sed -i.bak 's/Alex & Jamie/小明 \& 小華/g' {} \;
+find . -name "*.bak" -delete
+```
+
+### 3-2. 替換網域
+
+```bash
+# 把 your-domain.example.com 換成你的網域
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) -not -path "./node_modules/*" \
+  -exec sed -i.bak 's/your-domain.example.com/我們的婚禮.tw/g' {} \;
+find . -name "*.bak" -delete
+```
+
+### 3-3. 替換新人似顏繪與封面圖
+
+```
+public/couple-illustration.png   ← 換成你們的圓形似顏繪（建議 512×512）
+public/sample-cover.svg          ← 換成你們的 OG / 社群分享預覽圖（建議 1200×800）
+```
+
+直接覆蓋這兩個檔案即可。
+
+### 3-4. 客製化主題色（選用）
+
+5 種主題定義在 [`components/BlessingCard/cardTemplates.ts`](./components/BlessingCard/cardTemplates.ts)。
+
+每個主題的設定長這樣：
+
+```ts
+{
+  id: 'classic',
+  card: { backgroundColor: '#fffbf0', ... },
+  message: { background: '#fef3d4', border: '#e8d4a3', ... },
+  text: { title: '#6b5a2a', body: '#3a3a3a', ... },
+  accent: '#c9a84c',  // 邊框、分隔線、四角紋飾的主色
+}
+```
+
+可以直接改 hex 值，或新增第 6 種主題（記得也在 `lib/constants.ts` 註冊新的 templateId）。
+
+---
+
+## Step 4：部署上線
+
+完成自訂後，把網站部署到網路上，賓客掃 QR Code 才能進入。
+
+### 選項 A：Vercel（推薦，免費，5 分鐘）
+
+**步驟**：
+
+1. 把你的 fork 推到自己的 GitHub repo（如 `myname/our-wedding-cards`）
+2. 到 [vercel.com/new](https://vercel.com/new) 用 GitHub 登入
+3. 選你的 repo → 點 `Deploy`
+4. 等 2 分鐘，拿到網址（例：`our-wedding-cards.vercel.app`）
+
+**設定自訂網域**（選用）：
+- Vercel Dashboard → Project Settings → Domains → 加入你的網域
+- 跟著畫面指示去 DNS 設定 CNAME
+
+**選用環境變數**（要寄送 Email 才需要）：
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@gmail.com
+SMTP_PASS=your-app-password    # 不是 Gmail 密碼，是「應用程式密碼」
+SMTP_FROM=新人姓名 <your@gmail.com>
+```
+
+### 選項 B：Cloudflare Pages（免費，適合自訂網域）
+
+```bash
+npm run build
+npx opennextjs-cloudflare deploy
+```
+
+詳細步驟見 [Cloudflare Next.js 部署文件](https://developers.cloudflare.com/pages/framework-guides/nextjs/)。
+
+### 選項 C：GitHub Pages（純靜態，受限）
+
+⚠️ **限制**：GitHub Pages 只支援靜態網站，沒有伺服器。本專案有 API routes（`/api/verify-guest`、`/api/card-data`、`/api/send-email`），**無法直接運作**。
+
+如果一定要用 GitHub Pages，需要大幅改動：
+1. 把賓客 JSON 直接 embed 進前端（**賓客名單會對外可見**，有隱私風險）
+2. 改用 `next export` 產生靜態檔
+3. 失去 rate limiting、honeypot、email 寄送等功能
+
+> 👉 **建議**：除非你能接受名單對外可見，否則選 Vercel 或 Cloudflare。
+
+### 選項 D：完全不想處理部署？
+
+回到上方 → 用 [**card.oharalab.com**](https://card.oharalab.com) SaaS 服務。
+
+---
+
+## Step 5：印 QR Code
+
+部署完拿到網址後，印一張 QR Code 放在婚禮現場：
+
+```bash
+# 用 CLI 產生 QR Code
+npx qrcode "https://our-wedding-cards.vercel.app" -o qr.png -w 1200
+```
+
+或用線上工具：[qr-code-generator.com](https://www.qr-code-generator.com/)
+
+建議把 QR Code 印在邊長 ≥ 5 公分的紙板上，掃描距離 ≥ 30 公分。
+
+---
+
+## 完整檔案目錄（給 AI 參考用）
+
+```
+wedding-guest-cards-public/
+├── app/                              # Next.js App Router
+│   ├── page.tsx                      # 驗證入口頁（要改新人名）
+│   ├── layout.tsx                    # 根 layout（要改 SITE_TITLE 等）
+│   ├── icon.svg                      # 網站 favicon
+│   ├── card/[guestId]/
+│   │   ├── page.tsx                  # 卡片展示頁
+│   │   └── layout.tsx                # 卡片頁 OG meta（要改）
+│   ├── [tableId]/page.tsx            # 桌次入口（可選）
+│   └── api/
+│       ├── verify-guest/             # 姓名＋電話驗證 API
+│       ├── card-data/[guestId]/      # 卡片資料 API
+│       └── send-email/               # 寄送 Email API
+├── components/
+│   ├── BlessingCard/
+│   │   ├── index.tsx                 # 祝福卡主元件（要改第 142 行簽名）
+│   │   ├── cardTemplates.ts          # 5 種主題定義（要改顏色就改這裡）
+│   │   ├── BorderOrnament.tsx        # 邊框裝飾
+│   │   ├── DividerElegant.tsx        # 分隔線
+│   │   └── CornerOrnament.tsx        # 四角紋飾
+│   ├── EnvelopeAnimation/
+│   │   ├── index.tsx                 # 信封動畫元件
+│   │   └── Envelope.module.css       # 動畫 CSS
+│   ├── VerificationForm/             # 驗證表單
+│   ├── DownloadButton/               # 下載卡片
+│   ├── EmailShareButton/             # Email 分享
+│   ├── PetalRain.tsx                 # 花瓣粒子背景
+│   └── icons/                        # SVG icons
+├── lib/
+│   ├── db.ts                         # 賓客儲存 + 10 組範例 seedTestData()
+│   ├── init.ts                       # 資料初始化（Step 2-5 要改這個）
+│   ├── validation.ts                 # 輸入驗證
+│   ├── rate-limit.ts                 # IP rate limit
+│   ├── email.ts                      # Email 寄送（要改第 4 行 SENDER_NAME）
+│   ├── capture-card.ts               # 卡片截圖
+│   └── constants.ts                  # 主題 ID 常數
+├── data/
+│   └── guests-template.xlsx          # Excel 模板（填寫後另存 guests.xlsx）
+├── public/
+│   ├── couple-illustration.png       # 新人似顏繪（要換）
+│   ├── sample-cover.svg              # OG 封面（要換）
+│   ├── sample-images/                # 10 張範例插畫（部署前可刪）
+│   ├── photos/                       # 你自己的照片放這裡
+│   └── fonts/                        # 中文字型
+├── scripts/
+│   ├── import-guests.ts              # Excel → JSON 匯入腳本
+│   ├── init-data.ts                  # 範例資料初始化
+│   ├── parse-tables.ts               # 桌次表解析（可選）
+│   ├── enrich-guests.ts              # 賓客資料補強（可選）
+│   └── get-gmail-token.ts            # Gmail OAuth token 取得
+├── tests/                            # Vitest 測試
+├── styles/globals.css                # 全域樣式
+├── types/                            # TypeScript 型別
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+├── next.config.ts
+├── vitest.config.ts
+├── README.md                         # ← 本檔案
+├── CLAUDE.md                         # Claude Code 工作筆記
+└── LICENSE                           # PolyForm Noncommercial 1.0.0
+```
+
+---
+
+## 範例帳號（內建 10 組）
+
+部署前可以用這 10 組測試流程。實際上線時記得替換成自己的資料（見 Step 2）。
 
 | # | 姓名 | 電話 | 主題 | 圖片數 |
 |---|------|------|------|--------|
@@ -75,268 +438,75 @@ npm run dev
 | 9 | 怡君 | `0912000009` | luxe（粉橘） | 2 |
 | 10 | 宏達 | `0912000010` | luxe（粉橘） | 1 |
 
-> 賓客資料與祝福訊息定義於 [`lib/db.ts`](./lib/db.ts) 的 `seedTestData()`。範例圖片為 SVG 佔位插畫，放在 `public/sample-images/`。範例訊息口語化、有自嘲、不甜膩，可作為自訂時的語氣參考。
+定義在 [`lib/db.ts`](./lib/db.ts) 的 `seedTestData()` 函式。
 
 ---
 
-## 換成自己的內容（三大步驟）
+## 常見問題 FAQ
 
-### Step 1: 把照片放對位置
+### Q1：賓客輸入姓名後說「查無資料」？
 
-**📁 照片要放在哪？**
+確認三件事：
+1. 賓客姓名與 `lib/guests.json`（或 `lib/db.ts` 的 `name`）**完全一致**（包含繁簡、空格）
+2. 你是否有跑 `npm run import:guests` 重新生成 JSON
+3. 你是否有重啟 dev server（改 JSON 後要重啟）
 
-把你自己拍的賓客照片放進 `public/photos/` 資料夾：
+系統會做大小寫不敏感與 trim 處理，但**不會做模糊比對**。
 
-```
-public/
-├── photos/                    ← 你的照片放這裡
-│   ├── 王小明.jpg
-│   ├── 01-王小明.jpg
-│   ├── 02-李小華.jpg
-│   ├── 03-Alex_Chen.jpg
-│   ├── 我跟阿明的合照.jpeg
-│   └── ...
-├── couple-illustration.png    ← 新人似顏繪（換成你們的）
-└── sample-cover.svg           ← 社群分享預覽圖（換成你們的）
-```
+### Q2：我改了 Excel 但網站沒變？
 
-**📛 命名規則建議**
+改完 Excel 後**三個步驟**缺一不可：
+1. 跑 `npm run import:guests` 重新生成 `lib/guests.json`
+2. 在 dev server 視窗按 `Ctrl+C` 停掉
+3. 再跑一次 `npm run dev`
 
-1. **單純姓名**：`王小明.jpg`、`Alex_Chen.jpg`
-2. **編號＋姓名**：`01-王小明.jpg`、`02-李小華.jpg`（方便排序）
-3. **描述性命名**：`與阿明的合照.jpg`、`大學時期.jpg`
-4. **避免**：`照片1.jpg`、`IMG_4523.jpg`（之後找不到誰是誰）
+### Q3：圖片顯示破圖？
 
-> ✅ 支援格式：`.jpg` / `.jpeg` / `.png` / `.webp` / `.svg` / `.avif`
-> ✅ 建議尺寸：800×600 以上（直/橫向皆可，系統會自動裁切）
-> ✅ 中文檔名 OK，會自動 URL encode
+檢查三件事：
+1. 照片是否放在 `public/photos/` 底下（不是其他資料夾）
+2. 路徑寫法是否為 `/photos/檔名.jpg`（**不要加 `public/`**）
+3. 副檔名大小寫是否一致（macOS 開發時不敏感，但 Linux 部署後敏感）
 
-**📝 怎麼在卡片上引用照片？**
+### Q4：為什麼 Tailwind 某些 class 沒生效？
 
-在 Excel 或 `lib/db.ts` 中填路徑時，用 `/photos/檔名` 開頭即可：
+`styles/globals.css` 中的 `* { padding: 0; margin: 0; }` 會覆蓋 Tailwind utility class。對於關鍵間距，請改用 inline style：
 
-```
-✅ /photos/王小明.jpg
-✅ /photos/01-王小明.jpg
-❌ photos/王小明.jpg          （少了開頭斜線）
-❌ public/photos/王小明.jpg    （不要加 public/）
-❌ ./photos/王小明.jpg         （不要加點號）
+```tsx
+<div style={{ marginBottom: '2.5rem' }}>...</div>
 ```
 
-多張照片用逗號隔開（Excel）或陣列（JSON）：
-- Excel：`/photos/01-王小明.jpg, /photos/02-王小明.jpg`
-- JSON：`["/photos/01-王小明.jpg", "/photos/02-王小明.jpg"]`
+可以參考 `app/page.tsx` 第 90、98 行的範例寫法。
+
+### Q5：部署後賓客資料怎麼處理？
+
+預設使用記憶體儲存，每次 cold start 會重新跑 init。如果賓客名單會更新（RSVP 變動），有兩個選擇：
+
+- **小規模（< 100 人）**：每次更新名單後重新部署即可
+- **大規模 / 頻繁更新**：改用 Vercel KV、Redis 或 Supabase（需要改 `lib/db.ts`）
+
+### Q6：可以拿來做商業用途嗎？
+
+不行（沒有付費的話）。本專案使用 **PolyForm Noncommercial 1.0.0** 授權：
+
+- ✅ 自己的婚禮、研究、學習 → 免費
+- ✅ 慈善、教育、政府機構 → 免費
+- ❌ 接案做給客戶用 → 需要授權
+- ❌ 做成 SaaS 服務賣錢 → 需要授權
+
+商業授權洽詢：📧 **kevin868686@gmail.com**
 
 ---
 
-### Step 2: 編輯賓客名單（Excel 流程）
-
-我準備了一份 Excel 模板，這是最不需要碰程式碼的方式：
-
-#### 2-1. 開啟模板
+## 開發指令速查
 
 ```bash
-open data/guests-template.xlsx
+npm run dev             # 開發伺服器（http://localhost:3000）
+npm run build           # 建置生產版本
+npm start               # 啟動生產伺服器
+npm run import:guests   # Excel → JSON 匯入
+npm run init:data       # 重新載入 10 組範例資料
+npm test                # 執行 Vitest 測試
 ```
-
-或直接在 Finder / 檔案總管打開 `data/guests-template.xlsx`。
-
-#### 2-2. 填寫賓客資料
-
-模板長這樣（5 個欄位，第一列是欄位名不要動）：
-
-| 姓名 | 電話 | 祝福訊息 | 主題 | 圖片 |
-|------|------|----------|------|------|
-| 王小明 | 0912345678 | 親愛的小明，\n感謝你的陪伴... | classic | /photos/01-王小明.jpg |
-| 李小華 | 0987654321 | 親愛的小華，... | rose | /photos/02-李小華.jpg, /photos/02b-李小華.jpg |
-| John Doe | 0922222222 | Dear John,... | spring |  |
-
-**欄位說明：**
-
-| 欄位 | 必填？ | 說明 |
-|------|--------|------|
-| **姓名** | ✅ 必填 | 用於登入驗證，需與賓客輸入完全一致 |
-| **電話** | 選填 | 沒填的話只用姓名驗證 |
-| **祝福訊息** | 選填 | 卡片中央顯示的內容，用 `\n` 換行（Excel 中按 Alt+Enter） |
-| **主題** | 選填 | `classic` / `rose` / `midnight` / `spring` / `luxe`（不填預設 classic） |
-| **圖片** | 選填 | 一張或多張，多張用 `, ` 逗號隔開。路徑要用 `/photos/檔名` 格式 |
-
-#### 2-3. 另存為 `guests.xlsx`
-
-```bash
-# 把編輯好的檔案存成 data/guests.xlsx（不要存回 guests-template.xlsx）
-```
-
-#### 2-4. 跑匯入指令
-
-```bash
-npm run import:guests
-```
-
-指令會：
-1. 讀取 `data/guests.xlsx`
-2. 驗證每一列（姓名是否填、主題是否合法、圖片路徑是否存在等）
-3. 生成 `lib/guests.json`
-4. 印出匯入摘要（成功幾筆、警告幾筆）
-
-#### 2-5. 切換 `lib/init.ts` 使用真實資料
-
-打開 [`lib/init.ts`](./lib/init.ts)，把：
-
-```ts
-import { seedTestData, getAllGuests } from './db';
-// ...
-await seedTestData();
-```
-
-改成：
-
-```ts
-import { addGuest, getAllGuests } from './db';
-import { Guest } from '@/types/guest';
-import guestsData from './guests.json';
-// ...
-for (const guest of guestsData as Guest[]) {
-  await addGuest(guest);
-}
-```
-
-#### 2-6. 重新啟動 dev server
-
-```bash
-npm run dev
-```
-
-打開 http://localhost:3000，用你 Excel 中的真實姓名測試驗證 → 看到你的賓客卡片。✅
-
-> 📌 **不想用 Excel？** 可以直接編輯 [`lib/db.ts`](./lib/db.ts) 中的 `seedTestData()`，把 10 組範例改成自己的賓客（適合 < 30 人的情況）。
-
----
-
-### Step 3: 自訂新人名稱、主題色與品牌資訊
-
-#### 3-1. 替換新人名稱
-
-| 檔案 | 要改的內容 |
-|------|------------|
-| [`app/layout.tsx`](./app/layout.tsx) | `SITE_TITLE`、`SITE_URL`、`SITE_DESCRIPTION`、`keywords`、`authors` |
-| [`app/card/[guestId]/layout.tsx`](./app/card/[guestId]/layout.tsx) | 卡片頁 OG meta（title、description、images） |
-| [`app/page.tsx`](./app/page.tsx) 第 92 行 | 登入頁顯示的新人名稱 |
-| [`components/BlessingCard/index.tsx`](./components/BlessingCard/index.tsx) 第 142 行 | 卡片簽名 |
-| [`lib/email.ts`](./lib/email.ts) | `CARD_BASE_URL`、`SENDER_NAME`（寄信用） |
-
-可以全域搜尋 `Alex & Jamie`、`your-domain.example.com` 一起替換。
-
-#### 3-2. 替換新人似顏繪 / 封面圖
-
-```
-public/couple-illustration.png   ← 登入頁圓形似顏繪，建議 512×512
-public/sample-cover.svg          ← OG / 社群分享預覽，建議 1200×800
-```
-
-#### 3-3. 客製化主題色
-
-5 種主題定義於 [`components/BlessingCard/cardTemplates.ts`](./components/BlessingCard/cardTemplates.ts)：
-
-```ts
-{
-  id: 'classic',
-  card: { backgroundColor: '#fffbf0', ... },
-  message: { background: '#fef3d4', border: '#e8d4a3', ... },
-  text: { title: '#6b5a2a', body: '#3a3a3a', ... },
-  accent: '#c9a84c',  // 邊框、分隔線、四角紋飾的主色
-}
-```
-
-可以直接改 hex 值，或新增第 6 種主題（記得在 `lib/constants.ts` 也註冊新的 templateId）。
-
----
-
-## 部署上線（三種選擇）
-
-完成自訂後，把網站部署到網路上，賓客掃 QR Code 才能進入。
-
-### 選項 A：Vercel（推薦，最簡單）
-
-**優點**：免費、零設定、支援 API routes、自動 HTTPS、全球 CDN。
-
-**步驟**：
-
-1. 把你的 fork 推到自己的 GitHub repo
-2. 到 [vercel.com/new](https://vercel.com/new) 選你的 repo
-3. 點 Deploy（連環境變數都不用設，預設就能跑）
-4. 拿到網址（例：`your-wedding.vercel.app`）
-
-**選用環境變數**（要寄送 Email 才需要）：
-
-```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your@gmail.com
-SMTP_PASS=your-app-password
-SMTP_FROM="新人姓名 <your@gmail.com>"
-```
-
-### 選項 B：Cloudflare Pages / Workers（免費、適合自訂網域）
-
-**優點**：免費、可綁自訂網域（如 `our-wedding.com`）、全球 CDN、Edge Worker 含 API。
-
-**步驟**：
-
-1. 安裝 OpenNext adapter（已內建於 deps）
-2. Build：
-   ```bash
-   npm run build
-   npx opennextjs-cloudflare deploy
-   ```
-3. 在 Cloudflare Dashboard 綁自訂網域
-
-詳見 [Cloudflare Next.js 部署文件](https://developers.cloudflare.com/pages/framework-guides/nextjs/)。
-
-### 選項 C：GitHub Pages（純靜態，受限）
-
-**⚠️ 注意**：GitHub Pages 只支援靜態網站，沒有伺服器。本專案的 API routes（`/api/verify-guest`、`/api/card-data`、`/api/send-email`）**無法**直接運作。
-
-如果一定要用 GitHub Pages，需要做大幅改動：
-1. 把賓客 JSON 直接 embed 進前端（賓客名單會對外可見，有隱私風險）
-2. 改用 `next export` 產生靜態檔
-3. 失去 rate limiting、honeypot、email 寄送等保護
-
-> 👉 **建議**：除非你能接受名單對外可見，否則選 Vercel 或 Cloudflare。
-
-### 選項 D：完全不想處理部署？
-
-回到上方 → 用 [**card.oharalab.com**](https://card.oharalab.com) SaaS 服務，5 分鐘搞定。
-
----
-
-## QR Code 設定
-
-婚禮現場印一張 QR Code 大牌或桌卡，指向你部署後的網址：
-
-```bash
-# 用 CLI 產生（需要 Node.js）
-npx qrcode "https://your-wedding.vercel.app" -o qr.png -w 1200
-
-# 或用線上工具
-# https://www.qr-code-generator.com/
-```
-
-建議把 QR Code 印在 1200×1200 像素以上、邊長 ≥ 5 公分的紙板上。
-
----
-
-## Email 寄送設定（選用）
-
-如果要讓賓客可以把卡片寄到自己 email，需要設定 SMTP（見上方環境變數）。
-
-**Gmail 設定步驟：**
-
-1. 帳號開啟 2FA
-2. 到 [Google 應用程式密碼](https://myaccount.google.com/apppasswords) 產生 16 碼密碼
-3. 把這 16 碼填到 `SMTP_PASS`
-
-不設定也沒關係，卡片下載 / 顯示功能不受影響。
 
 ---
 
@@ -344,7 +514,7 @@ npx qrcode "https://your-wedding.vercel.app" -o qr.png -w 1200
 
 - **前端**：Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4
 - **動畫**：純 CSS Animations + CSS Modules（信封 3D 翻轉、花瓣粒子）
-- **儲存**：記憶體 Map（開發用）；正式環境建議 Vercel KV / Redis / Supabase
+- **儲存**：記憶體 Map（開發用）；正式環境可換成 Vercel KV / Redis / Supabase
 - **驗證**：自寫姓名＋電話雙驗證 + Honeypot 反爬蟲 + IP Rate Limiting
 - **Email**：Nodemailer + SMTP
 - **截圖 / 下載**：html-to-image
@@ -352,114 +522,30 @@ npx qrcode "https://your-wedding.vercel.app" -o qr.png -w 1200
 
 ---
 
-## 專案架構
-
-```
-wedding-guest-cards-public/
-├── app/                          # Next.js App Router
-│   ├── page.tsx                  # 驗證入口
-│   ├── card/[guestId]/           # 卡片展示頁
-│   └── api/
-│       ├── verify-guest/         # 姓名＋電話驗證
-│       ├── card-data/            # 卡片資料 API
-│       └── send-email/           # 寄送 Email
-├── components/
-│   ├── BlessingCard/             # 祝福卡片（含主題系統）
-│   ├── EnvelopeAnimation/        # 信封 3D 翻轉動畫
-│   ├── VerificationForm/         # 驗證表單
-│   ├── DownloadButton/           # 卡片下載
-│   ├── EmailShareButton/         # Email 分享
-│   └── PetalRain.tsx             # 花瓣粒子背景
-├── lib/
-│   ├── db.ts                     # 記憶體儲存 + 10 組範例 seedTestData()
-│   ├── validation.ts             # 輸入驗證
-│   ├── rate-limit.ts             # IP rate limit
-│   ├── email.ts                  # Nodemailer 封裝
-│   ├── capture-card.ts           # 卡片截圖
-│   ├── constants.ts              # 主題 ID 常數
-│   └── init.ts                   # 範例資料初始化
-├── data/
-│   └── guests-template.xlsx      # Excel 模板（填寫後另存 guests.xlsx）
-├── public/
-│   ├── couple-illustration.png   # 新人似顏繪
-│   ├── sample-cover.svg          # OG 封面
-│   ├── sample-images/            # 10 張範例插畫
-│   └── photos/                   # 你自己的照片放這裡
-├── scripts/
-│   ├── import-guests.ts          # Excel → JSON 匯入
-│   ├── init-data.ts              # seed 範例資料
-│   ├── parse-tables.ts           # 桌次表解析（可選）
-│   └── enrich-guests.ts          # 賓客資料補強（可選）
-└── tests/                        # Vitest 測試
-```
-
----
-
-## 常見問題
-
-**Q: 我的賓客輸入姓名後說「查無資料」？**
-A: 確認賓客姓名與 `lib/guests.json` 或 `lib/db.ts` 中的 `name` 完全一致（包含繁簡、空格）。系統會做大小寫不敏感與 trim 處理，但不會做模糊比對。
-
-**Q: 為什麼我改了 Excel 但網站沒變？**
-A: 改完 Excel 後要記得跑 `npm run import:guests` 重新生成 `lib/guests.json`，然後重啟 dev server (`Ctrl+C` 後再 `npm run dev`)。
-
-**Q: 圖片顯示破圖？**
-A: 檢查三件事：
-1. 照片是否放在 `public/photos/` 底下
-2. 路徑寫法是否為 `/photos/檔名.jpg`（不要加 `public/`）
-3. 副檔名大小寫是否一致（macOS 不敏感、Linux 部署敏感）
-
-**Q: 為什麼 Tailwind 某些 class 沒生效？**
-A: `globals.css` 中的 `* { padding: 0; margin: 0; }` 會覆蓋 Tailwind utility class。對於關鍵間距，請改用 inline style（見 `app/page.tsx` 範例）。
-
-**Q: 部署後賓客資料怎麼處理？**
-A: 預設使用記憶體儲存，每次 cold start 會重新跑 init。如果賓客名單會更新（RSVP 變動），建議改用 Vercel KV 或外部資料庫。
-
-**Q: 可以拿來做商業用途嗎？**
-A: 本專案使用 **PolyForm Noncommercial 1.0.0** 授權，**禁止商業用途**。個人 / 非商業使用（自己的婚禮、研究、學習）皆可。若要用於商業專案（接案、SaaS、付費服務等），請來信聯絡作者討論授權。
-
----
-
-## 開發指令
-
-```bash
-npm run dev             # 開發伺服器（http://localhost:3000）
-npm run build           # 建置生產版本
-npm start               # 啟動生產伺服器
-npm run import:guests   # Excel → JSON 匯入
-npm run init:data       # 載入 10 組範例資料（測試用）
-npm test                # 執行 Vitest 測試
-npm run test:ui         # 測試 UI 介面
-npm run test:coverage   # 測試覆蓋率
-```
-
----
-
 ## 授權
 
 **[PolyForm Noncommercial License 1.0.0](./LICENSE)**
 
-- ✅ 個人 / 非營利用途自由使用、修改、散布
-- ✅ 自己的婚禮、研究、學習、實驗
-- ✅ 慈善、教育、政府機構
-- ❌ 商業用途（接案、SaaS、付費服務等）
-- ❌ 任何以營利為目的的散布
+| 用途 | 是否允許 |
+|------|---------|
+| 你自己的婚禮 | ✅ |
+| 學習、研究、實驗 | ✅ |
+| 慈善、教育、政府機構 | ✅ |
+| 接案 / 商業專案 | ❌ 需要授權 |
+| 做成 SaaS 服務 | ❌ 需要授權 |
+| 任何以營利為目的的散布 | ❌ 需要授權 |
 
-**商業授權洽詢：📧 kevin868686@gmail.com**
+商業授權洽詢：📧 **kevin868686@gmail.com**
 
-或直接使用 SaaS 版本 → [card.oharalab.com](https://card.oharalab.com)
+或直接用 SaaS 版本 → [card.oharalab.com](https://card.oharalab.com)
 
 ---
 
 ## 貢獻
 
-歡迎開 issue 或 PR 改善：
-- Bug 回報
-- 新主題色
-- 新動畫效果
-- 文件改善
+歡迎開 issue 或 PR 改善：Bug 回報、新主題色、新動畫效果、文件改善。
 
-但請注意，貢獻內容將以 PolyForm Noncommercial 1.0.0 授權釋出。
+注意：貢獻內容將以 PolyForm Noncommercial 1.0.0 授權釋出。
 
 ---
 
@@ -467,10 +553,5 @@ npm run test:coverage   # 測試覆蓋率
 
 Made with 💛 by [Darren Lu](https://github.com/darrenlu86)
 
-如果這個專案對你的婚禮（或任何個人專案）有幫助，歡迎 ⭐ Star 或來信跟我說一聲，我會很開心！
-
-也歡迎追蹤我的其他作品：
-- [card.oharalab.com](https://card.oharalab.com) — 婚禮感謝卡 SaaS
-- [invite.oharalab.com](https://invite.oharalab.com) — 婚禮邀請函 SaaS
-- [game.oharalab.com](https://game.oharalab.com) — 婚禮互動遊戲 SaaS
+如果這個專案對你的婚禮（或任何個人專案）有幫助，歡迎 ⭐ Star 或來信跟我說一聲！
 
