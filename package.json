@@ -1,7 +1,7 @@
 {
-  "name": "wedding-guest-cards",
+  "name": "wedding-guest-cards-public",
   "version": "1.0.0",
-  "description": "",
+  "description": "Open-source wedding guest card system with envelope animation, 5 themes, and 10 sample guests. Personal/non-commercial use only.",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -10,12 +10,19 @@
     "lint": "next lint",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "import:guests": "tsx scripts/import-guests.ts",
+    "init:data": "tsx scripts/init-data.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "private": true,
+  "keywords": ["wedding", "guest-card", "nextjs", "envelope-animation", "blessing-card"],
+  "author": "Darren Lu <kevin868686@gmail.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://github.com/darrenlu86/wedding-guest-cards-public",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darrenlu86/wedding-guest-cards-public.git"
+  },
+  "private": false,
   "dependencies": {
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.10",
