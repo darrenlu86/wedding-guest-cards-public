@@ -62,27 +62,3 @@ export function validateEmail(email: string): ValidationResult {
     sanitized: trimmed,
   };
 }
-
-export function validateTableId(tableId: string): ValidationResult {
-  const trimmed = tableId.trim();
-
-  if (!trimmed) {
-    return {
-      isValid: false,
-      error: '桌號不能為空',
-    };
-  }
-
-  // 檢查格式: table-{number}
-  if (!/^table-\d+$/.test(trimmed)) {
-    return {
-      isValid: false,
-      error: '桌號格式不正確',
-    };
-  }
-
-  return {
-    isValid: true,
-    sanitized: trimmed,
-  };
-}

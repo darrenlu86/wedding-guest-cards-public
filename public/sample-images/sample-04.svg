@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
-  <rect width="800" height="600" fill="#fde8ec"/>
-  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#d4778a" stroke-width="2" opacity="0.5" rx="12"/>
-  <g fill="#d4778a" opacity="0.55"><circle cx="350" cy="240" r="14"/><circle cx="400" cy="220" r="18"/><circle cx="450" cy="240" r="14"/><circle cx="375" cy="270" r="12"/><circle cx="425" cy="270" r="12"/><circle cx="400" cy="295" r="10"/></g>
-  <text x="400" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#7a3050" font-style="italic">Sample Memory 04</text>
-  <text x="400" y="450" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="18" fill="#d4778a" opacity="0.85">Theme: rose</text>
-  <text x="400" y="500" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="14" fill="#d4778a" opacity="0.6">Replace this placeholder with your own photo</text>
-</svg>

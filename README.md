@@ -302,15 +302,16 @@ public/sample-cover.svg          ← 換成你們的 OG / 社群分享預覽圖�
 - Vercel Dashboard → Project Settings → Domains → 加入你的網域
 - 跟著畫面指示去 DNS 設定 CNAME
 
-**選用環境變數**（要寄送 Email 才需要）：
+**選用環境變數**（要寄送 Email 才需要，詳見下方「Step 6：Email 寄送設定」）：
 
 ```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your@gmail.com
-SMTP_PASS=your-app-password    # 不是 Gmail 密碼，是「應用程式密碼」
-SMTP_FROM=新人姓名 <your@gmail.com>
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
+GMAIL_SENDER_EMAIL=
 ```
+
+> ⚠️ **重要**：這四個值「必須使用你自己的 Google 帳號和 OAuth Client」，**不要填別人的**，否則賓客寄出的 Email 會用別人的 Gmail 發送。詳見「Step 6」。
 
 ### 選項 B：Cloudflare Pages（免費，適合自訂網域）
 
@@ -350,6 +351,120 @@ npx qrcode "https://our-wedding-cards.vercel.app" -o qr.png -w 1200
 或用線上工具：[qr-code-generator.com](https://www.qr-code-generator.com/)
 
 建議把 QR Code 印在邊長 ≥ 5 公分的紙板上，掃描距離 ≥ 30 公分。
+
+---
+
+## Step 6：Email 寄送設定（Gmail OAuth）⚠️ 必看
+
+賓客在卡片頁有「Email 分享」按鈕，可以把自己的卡片寄到自己的 email 收藏。**這個功能需要你串接自己的 Google 帳號**，否則按下去會失敗。
+
+### ⚠️ 為什麼一定要用「你自己的」Google 帳號？
+
+這個專案 **沒有預設的 Email 寄件人**。所有 OAuth 憑證都從環境變數讀取：
+
+```ts
+// lib/email.ts:13-16
+const clientId = process.env.GMAIL_CLIENT_ID;
+const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+const senderEmail = process.env.GMAIL_SENDER_EMAIL;
+```
+
+- ✅ 你 fork 這個 repo，env 變數空白 → Email 按鈕會出現「寄送失敗」（其他功能不受影響）
+- ✅ 你填上自己的 Gmail OAuth 憑證 → 所有 Email 從你自己的 Gmail 發出
+- ❌ 你絕對不會「不小心用到作者（Darren Lu）的 Gmail」—— 因為原始碼裡沒有任何作者的憑證
+
+> **作者注**：我的 Gmail 憑證只存在我自己的 `.env.local`，從未推到 GitHub。你 clone 這個 repo 拿到的是空白的 `.env.example`。
+
+### 6-1. 在 Google Cloud Console 建立 OAuth Client
+
+1. 用你的 Gmail 帳號登入 [Google Cloud Console](https://console.cloud.google.com/)
+2. 建立一個新的 Project（或選現有的）
+3. 左側選單 → **APIs & Services** → **Library**
+4. 搜尋 `Gmail API` → 點 **Enable**
+5. 左側選單 → **APIs & Services** → **OAuth consent screen**
+   - User Type：**External**
+   - App name 隨便填（例：`Our Wedding Cards`）
+   - User support email：你的 Gmail
+   - Developer contact information：你的 Gmail
+   - **Scopes** 加入：`https://mail.google.com/`
+   - **Test users** 加入：你的 Gmail（OAuth 在 testing 模式下只允許 test users 授權）
+6. 左側選單 → **APIs & Services** → **Credentials** → **Create Credentials** → **OAuth client ID**
+   - Application type：**Desktop app**
+   - Name 隨便填
+   - **Create** 之後會跳出 Client ID 和 Client Secret
+
+### 6-2. 複製 `.env.example` 並填入
+
+```bash
+cp .env.example .env.local
+```
+
+打開 `.env.local`，填入剛剛拿到的值：
+
+```env
+GMAIL_CLIENT_ID=123456789-xxxxx.apps.googleusercontent.com   # ← Google 給你的
+GMAIL_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxxxx            # ← Google 給你的
+GMAIL_REFRESH_TOKEN=                                          # ← 下一步取得
+GMAIL_SENDER_EMAIL=your-name@gmail.com                       # ← 你的 Gmail
+```
+
+### 6-3. 取得 Refresh Token（自動化腳本）
+
+```bash
+npx tsx scripts/get-gmail-token.ts
+```
+
+腳本會：
+1. 問你 Client ID 和 Client Secret（直接從 `.env.local` 複製貼上）
+2. 開啟瀏覽器，跳到 Google 授權頁面
+3. 你按「允許」授權給自己的 OAuth Client（會看到 unverified app 警告，按「Advanced → Go to ... unsafe」沒關係，因為你是用自己的 Client 授權給自己）
+4. 取得 Refresh Token，印在終端機
+
+把這個 Refresh Token 貼回 `.env.local` 的 `GMAIL_REFRESH_TOKEN=`。
+
+### 6-4. 部署時把這四個變數設到 Vercel / Cloudflare
+
+**Vercel**：Dashboard → Project Settings → Environment Variables → 加入四個變數。
+
+**Cloudflare Pages**：Dashboard → Project → Settings → Environment variables → 加入四個變數。
+
+> ⚠️ **絕對不要**把 `.env.local` 推到 GitHub。`.gitignore` 已經幫你忽略了，但每次 commit 前還是確認一下 `git status` 沒有列出 `.env.local`。
+
+### 6-5. 測試
+
+在本地跑 `npm run dev`，進入卡片頁，按「Email 分享」→ 輸入收件 email → 應該會收到一封 HTML 排版的卡片信。
+
+如果失敗：
+- 看終端機錯誤訊息（Client 端只會顯示「寄送失敗，請稍後再試」，server console 才有詳細錯誤）
+- 檢查 Gmail API 是否啟用、OAuth consent screen 是否加了你的 email 作為 test user
+
+### 6-6. 不想搞 Email？
+
+如果你覺得 OAuth 設定太麻煩，**直接不填就好**。卡片頁的 Email 按鈕會顯示錯誤，但其他功能（驗證、信封動畫、卡片顯示、下載卡片）完全不受影響。
+
+或者也可以直接刪掉 Email 按鈕：把 [`components/EmailShareButton`](./components/EmailShareButton/) 從卡片頁 import 移除即可。
+
+---
+
+## Step 7：下載功能（無需任何設定）
+
+賓客在卡片頁有「下載卡片」按鈕，**這個功能完全是前端處理的，不需要任何環境變數**。
+
+技術原理（在 [`components/DownloadButton/index.tsx`](./components/DownloadButton/index.tsx)）：
+
+1. 用 [`html-to-image`](https://www.npmjs.com/package/html-to-image) 把卡片 DOM 截成 PNG dataURL
+2. 把 dataURL 轉成 Blob 和 File
+3. 優先使用 **Web Share API**（手機 / LINE 內建瀏覽器會跳分享選單）
+4. Fallback：用 `<a download>` 觸發瀏覽器下載
+
+所以：
+- ✅ 不需要 server、不需要任何 API key
+- ✅ 不會把賓客資料上傳到任何地方
+- ✅ 桌面瀏覽器下載成 PNG 檔（檔名：`wedding-card-{guestName}.png`）
+- ✅ 手機跳系統分享選單，可以直接存到相簿或傳給朋友
+
+如果想換成下載 PDF 或 JPG，可以改 [`lib/capture-card.ts`](./lib/capture-card.ts) 的 `toPng` 為 `toJpeg` 或接 `jsPDF`。
 
 ---
 
@@ -397,14 +512,13 @@ wedding-guest-cards-public/
 ├── public/
 │   ├── couple-illustration.png       # 新人似顏繪（要換）
 │   ├── sample-cover.svg              # OG 封面（要換）
-│   ├── sample-images/                # 10 張範例插畫（部署前可刪）
+│   ├── sample-images/                # 10 張範例照片（部署前可刪）
 │   ├── photos/                       # 你自己的照片放這裡
 │   └── fonts/                        # 中文字型
 ├── scripts/
 │   ├── import-guests.ts              # Excel → JSON 匯入腳本
 │   ├── init-data.ts                  # 範例資料初始化
-│   ├── parse-tables.ts               # 桌次表解析（可選）
-│   ├── enrich-guests.ts              # 賓客資料補強（可選）
+│   ├── create-template.ts            # 重新生成 Excel 模板
 │   └── get-gmail-token.ts            # Gmail OAuth token 取得
 ├── tests/                            # Vitest 測試
 ├── styles/globals.css                # 全域樣式

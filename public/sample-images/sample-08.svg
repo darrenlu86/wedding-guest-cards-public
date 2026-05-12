@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
-  <rect width="800" height="600" fill="#dcfce8"/>
-  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#5fb878" stroke-width="2" opacity="0.5" rx="12"/>
-  <g fill="#5fb878" opacity="0.5"><path d="M 380 200 Q 360 240 380 280 Q 400 240 380 200 Z"/><path d="M 420 200 Q 440 240 420 280 Q 400 240 420 200 Z"/><path d="M 400 210 Q 380 250 400 290 Q 420 250 400 210 Z"/></g>
-  <text x="400" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#2d6b45" font-style="italic">Sample Memory 08</text>
-  <text x="400" y="450" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="18" fill="#5fb878" opacity="0.85">Theme: spring</text>
-  <text x="400" y="500" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="14" fill="#5fb878" opacity="0.6">Replace this placeholder with your own photo</text>
-</svg>

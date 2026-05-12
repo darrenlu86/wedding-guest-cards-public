@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateGuestName, validateEmail, validateTableId } from '@/lib/validation';
+import { validateGuestName, validateEmail } from '@/lib/validation';
 
 describe('validateGuestName', () => {
   it('應該接受有效的中文姓名', () => {
@@ -63,18 +63,5 @@ describe('validateEmail', () => {
     const result = validateEmail('  test@example.com  ');
     expect(result.isValid).toBe(true);
     expect(result.sanitized).toBe('test@example.com');
-  });
-});
-
-describe('validateTableId', () => {
-  it('應該接受有效的桌號格式', () => {
-    expect(validateTableId('table-1').isValid).toBe(true);
-    expect(validateTableId('table-10').isValid).toBe(true);
-  });
-
-  it('應該拒絕無效格式', () => {
-    expect(validateTableId('').isValid).toBe(false);
-    expect(validateTableId('invalid').isValid).toBe(false);
-    expect(validateTableId('table-').isValid).toBe(false);
   });
 });

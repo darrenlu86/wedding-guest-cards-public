@@ -12,7 +12,6 @@ describe('Verify Guest API', () => {
 
   it('應該成功驗證存在的賓客', async () => {
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '小明',
       ip: 'test-ip-1',
       honeypot: '',
@@ -27,7 +26,6 @@ describe('Verify Guest API', () => {
 
   it('應該拒絕不存在的賓客', async () => {
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '不存在的人',
       ip: 'test-ip-2',
       honeypot: '',
@@ -41,7 +39,6 @@ describe('Verify Guest API', () => {
 
   it('應該拒絕無效的姓名', async () => {
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '<script>alert(1)</script>',
       ip: 'test-ip-3',
       honeypot: '',
@@ -53,23 +50,9 @@ describe('Verify Guest API', () => {
     }
   });
 
-  it('應該拒絕無效的桌號', async () => {
-    const result = await verifyGuest({
-      tableId: 'invalid-table',
-      guestName: '小明',
-      ip: 'test-ip-4',
-      honeypot: '',
-    });
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.code).toBe('INVALID_INPUT');
-    }
-  });
 
   it('應該檢測 Honeypot', async () => {
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '小明',
       ip: 'test-ip-5',
       honeypot: 'bot-filled-this',
@@ -87,7 +70,6 @@ describe('Verify Guest API', () => {
     // 連續請求 5 次
     for (let i = 0; i < 5; i++) {
       await verifyGuest({
-        tableId: 'table-1',
         guestName: '小明',
         ip,
         honeypot: '',
@@ -96,7 +78,6 @@ describe('Verify Guest API', () => {
 
     // 第 6 次應該被拒絕
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '小明',
       ip,
       honeypot: '',
@@ -114,7 +95,6 @@ describe('Verify Guest API', () => {
     // 連續 3 次失敗
     for (let i = 0; i < 3; i++) {
       await verifyGuest({
-        tableId: 'table-1',
         guestName: '不存在的人',
         ip,
         honeypot: '',
@@ -123,7 +103,6 @@ describe('Verify Guest API', () => {
 
     // 第 4 次即使是正確的名字也可能被限制 (取決於實作)
     const result = await verifyGuest({
-      tableId: 'table-1',
       guestName: '小明',
       ip,
       honeypot: '',

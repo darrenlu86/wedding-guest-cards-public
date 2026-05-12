@@ -80,7 +80,7 @@ export async function seedTestData(): Promise<void> {
 雖然我們不算很常聯絡，但每次見面都還是可以無縫接軌，這種朋友其實已經不多了，謝謝你一直都在。
 
 接下來也祝你工作、感情都順順利利，下次找你吃個飯。`,
-        images: ['/sample-images/sample-01.svg'],
+        images: ['/sample-images/sample-01.jpg'],
         templateId: 'classic',
       },
     },
@@ -97,8 +97,8 @@ export async function seedTestData(): Promise<void> {
 
 謝謝妳今天來，愛妳～`,
         images: [
-          '/sample-images/sample-02.svg',
-          '/sample-images/sample-01.svg',
+          '/sample-images/sample-02.jpg',
+          '/sample-images/sample-01.jpg',
         ],
         templateId: 'classic',
       },
@@ -131,7 +131,7 @@ export async function seedTestData(): Promise<void> {
 不知道你接下來會往哪個方向走，但相信不論做什麼都會走出自己的路。如果之後有合作機會，歡迎隨時找我聊聊。
 
 祝好運！`,
-        images: ['/sample-images/sample-04.svg'],
+        images: ['/sample-images/sample-04.jpg'],
         templateId: 'rose',
       },
     },
@@ -147,7 +147,7 @@ Honestly didn't expect you to actually fly over for this — thanks for showing 
 The last time we hung out feels like ages ago, but somehow whenever we catch up it's like nothing changed. That's pretty rare these days, so I'll take it.
 
 Take care, and let's grab a proper drink before the year ends.`,
-        images: ['/sample-images/sample-05.svg'],
+        images: ['/sample-images/sample-05.jpg'],
         templateId: 'midnight',
       },
     },
@@ -164,8 +164,8 @@ Take care, and let's grab a proper drink before the year ends.`,
 
 愛妳～`,
         images: [
-          '/sample-images/sample-06.svg',
-          '/sample-images/sample-05.svg',
+          '/sample-images/sample-06.jpg',
+          '/sample-images/sample-05.jpg',
         ],
         templateId: 'midnight',
       },
@@ -198,7 +198,7 @@ Funny how we keep ending up in the same orbit even after all these years and tim
 Thanks for being someone I can pick up a conversation with after 6 months of silence like nothing happened — that's underrated.
 
 See you next time, wherever that ends up being.`,
-        images: ['/sample-images/sample-08.svg'],
+        images: ['/sample-images/sample-08.jpg'],
         templateId: 'spring',
       },
     },
@@ -215,8 +215,8 @@ See you next time, wherever that ends up being.`,
 
 愛妳，下次來家裡喝酒～`,
         images: [
-          '/sample-images/sample-09.svg',
-          '/sample-images/sample-10.svg',
+          '/sample-images/sample-09.jpg',
+          '/sample-images/sample-10.jpg',
         ],
         templateId: 'luxe',
       },
@@ -233,7 +233,7 @@ See you next time, wherever that ends up being.`,
 我們很久沒有好好聊了，今天時間如果不夠，那就先記著，下次換我們去找你，到時候你要負責當地陪、行程也要排好，我們去當奧客 :p
 
 祝順利平安，期待再見！`,
-        images: ['/sample-images/sample-10.svg'],
+        images: ['/sample-images/sample-10.jpg'],
         templateId: 'luxe',
       },
     },
