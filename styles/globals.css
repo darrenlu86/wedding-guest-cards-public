@@ -1,0 +1,567 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'jf-openhuninn';
+  src: url('/fonts/jf-openhuninn-2.1.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* 簡約色系 - 溫暖中性色調 */
+  --color-elegant-50: #faf9f7;
+  --color-elegant-100: #f5f2ed;
+  --color-elegant-200: #e8e2d9;
+  --color-elegant-300: #dbd1c5;
+  --color-elegant-400: #c9baaa;
+  --color-elegant-500: #b8a28f;
+  --color-elegant-600: #9c8775;
+  --color-elegant-700: #7a6957;
+  --color-elegant-800: #5c4f41;
+  --color-elegant-900: #3d352c;
+
+  /* 裝飾色系 */
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #fb7185;
+  --color-accent-blue: #60a5fa;
+}
+
+:root {
+  --elegant-base: #f5f2ed;
+  --elegant-dark: #7a6957;
+  --accent-warm: #f59e0b;
+  --font-sans: 'jf-openhuninn', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --font-serif: 'jf-openhuninn', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+
+  /* 優雅卡片配色系統 */
+  --card-ivory-50: #fafaf8;
+  --card-ivory-100: #f5f5f0;
+  --card-ivory-200: #e8e6dc;
+  --accent-bronze: #8b7355;
+  --accent-bronze-light: #a68968;
+  --accent-bronze-dark: #6b5744;
+  --text-primary: #2d2925;
+  --text-secondary: #5a544e;
+  --text-tertiary: #8b857d;
+  --detail-gold: #d4af37;
+  --detail-taupe: #c9b8a8;
+
+  /* 間距系統 */
+  --spacing-section: 5rem;           /* 80px */
+  --spacing-section-sm: 4rem;        /* 64px */
+  --spacing-component: 3rem;         /* 48px */
+  --spacing-element: 1.5rem;         /* 24px */
+  --input-to-button: 4rem;           /* 64px */
+  --input-to-button-sm: 5rem;        /* 80px */
+  --card-to-actions: 7rem;           /* 112px */
+  --card-to-actions-sm: 8rem;        /* 128px */
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'jf-openhuninn', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #faf9f7 0%, #f5f2ed 50%, #fff8f0 100%);
+  background-attachment: fixed;
+}
+
+/* 動態背景裝飾 */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(251, 113, 133, 0.05) 0%, transparent 50%);
+  animation: shimmer 25s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 玻璃擬態效果 */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-pink {
+  background: rgba(255, 229, 236, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 179, 198, 0.3);
+}
+
+/* 漸層文字 */
+.text-gradient-pink {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c2185b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ff6b9d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 陰影效果 */
+.shadow-soft {
+  box-shadow: 0 8px 32px rgba(255, 107, 157, 0.12);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 30px rgba(255, 107, 157, 0.3);
+}
+
+/* 按鈕效果 */
+.btn-primary {
+  background: #8b7355;
+  color: white;
+  font-weight: 500;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.2);
+  transition: all 0.3s;
+  transform: translateY(0);
+  letter-spacing: 0.05em;
+  font-family: var(--font-serif);
+}
+
+.btn-primary:hover {
+  background: #6b5744;
+  box-shadow: 0 4px 12px rgba(107, 87, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: white;
+  color: #ff6b9d;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid #ffadd2;
+  transition: all 0.3s;
+  transform: translateY(0);
+}
+
+.btn-secondary:hover {
+  border-color: #ff85b3;
+  background: #fff5f9;
+  transform: translateY(-0.125rem);
+}
+
+/* 裝飾性元素 */
+.floating-element {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 動畫延遲 */
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animation-delay-1500 {
+  animation-delay: 1500ms;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2000ms;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3000ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
+
+/* 卡片容器 */
+.card-container {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 8px 32px rgba(255, 107, 157, 0.12);
+}
+
+@media (min-width: 640px) {
+  .card-container {
+    padding: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-container {
+    padding: 3.5rem;
+  }
+}
+
+/* 輸入框樣式 */
+.input-field {
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+  border: 2px solid #c9baaa;
+  border-radius: 12px;
+  background-color: #fafaf8;
+  transition: all 0.3s;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: #8b7355;
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+  background-color: #ffffff;
+}
+
+.input-field:hover:not(:focus) {
+  border-color: #b8a28f;
+}
+
+/* 標題樣式 */
+.heading-primary {
+  font-size: 2.25rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff6b9d 0%, #c2185b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .heading-primary {
+    font-size: 3rem;
+  }
+}
+
+.heading-secondary {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #E91E63;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .heading-secondary {
+    font-size: 1.875rem;
+  }
+}
+
+/* 響應式字體大小 */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* 動畫定義 */
+@keyframes shimmer {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* ========== 優雅卡片樣式系統 ========== */
+
+@layer components {
+  /* 陰影系統 */
+  .card-elevation {
+    box-shadow:
+      0 1px 2px rgba(45, 41, 37, 0.04),
+      0 8px 16px rgba(45, 41, 37, 0.08),
+      0 24px 48px rgba(45, 41, 37, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .content-inset {
+    box-shadow:
+      inset 0 1px 3px rgba(45, 41, 37, 0.04),
+      0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* 紙質紋理 */
+  .paper-texture {
+    background-color: var(--card-ivory-50);
+    background-image:
+      repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(45, 41, 37, 0.01) 2px, rgba(45, 41, 37, 0.01) 4px),
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(45, 41, 37, 0.01) 2px, rgba(45, 41, 37, 0.01) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03' /%3E%3C/svg%3E");
+  }
+
+  /* 字體排版類別 */
+  .title-primary {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .title-secondary {
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    font-style: italic;
+    text-transform: uppercase;
+  }
+
+  .content-text {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+
+  .signature-name {
+    font-size: 1.75rem;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .signature-tagline {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.12em;
+    font-style: italic;
+  }
+
+  /* 間距系統 */
+  .content-box {
+    padding: 2.5rem 2rem;
+  }
+
+  .signature-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--card-ivory-200);
+  }
+
+  .image-grid {
+    gap: 1.5rem;
+  }
+
+  /* 圖片框架 */
+  .image-frame {
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 4px solid var(--card-ivory-100);
+    box-shadow: 0 2px 8px rgba(45, 41, 37, 0.08), inset 0 0 0 1px rgba(139, 115, 85, 0.1);
+  }
+}
+
+@layer utilities {
+  /* 顏色輔助類別 */
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-tertiary {
+    color: var(--text-tertiary);
+  }
+
+  .bg-ivory-100 {
+    background-color: var(--card-ivory-100);
+  }
+
+  .border-ivory-200 {
+    border-color: var(--card-ivory-200);
+  }
+
+  .border-ivory-200\/60 {
+    border-color: rgba(232, 230, 220, 0.6);
+  }
+}
+
+/* 按鈕樣式 - 統一基礎樣式 */
+.download-button,
+.email-button {
+  background-color: #8b7355;
+  color: #ffffff;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.2);
+  min-width: 160px;
+  justify-content: center;
+}
+
+.download-button:hover:not(:disabled),
+.email-button:hover:not(:disabled) {
+  background-color: #6b5744;
+  box-shadow: 0 4px 12px rgba(107, 87, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 響應式調整 */
+@media (max-width: 640px) {
+  .title-primary {
+    font-size: 2rem;
+  }
+
+  .title-secondary {
+    font-size: 0.875rem;
+  }
+
+  .content-text {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .signature-name {
+    font-size: 1.5rem;
+  }
+
+  .content-box {
+    padding: 2rem 1.5rem;
+  }
+}

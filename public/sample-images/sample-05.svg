@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#dbeafe"/>
+  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#6699cc" stroke-width="2" opacity="0.5" rx="12"/>
+  <g stroke="#6699cc" stroke-width="2.5" fill="none" opacity="0.75"><path d="M 320 280 L 400 200 L 480 280" /><path d="M 360 280 L 400 240 L 440 280" /></g><circle cx="400" cy="195" r="8" fill="#6699cc"/>
+  <text x="400" y="400" text-anchor="middle" font-family="Georgia, serif" font-size="38" fill="#2a5080" font-style="italic">Sample Memory 05</text>
+  <text x="400" y="450" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="18" fill="#6699cc" opacity="0.85">Theme: midnight</text>
+  <text x="400" y="500" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="14" fill="#6699cc" opacity="0.6">Replace this placeholder with your own photo</text>
+</svg>

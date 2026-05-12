@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff5f7"/>
+      <stop offset="50%" stop-color="#fff8f0"/>
+      <stop offset="100%" stop-color="#f0fff4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect x="40" y="40" width="1120" height="720" fill="none" stroke="#d4778a" stroke-width="3" opacity="0.45" rx="20"/>
+  <g opacity="0.5" fill="#d4778a">
+    <path d="M 540 320 Q 580 240 600 320 Q 620 240 660 320 Q 640 400 600 420 Q 560 400 540 320 Z"/>
+  </g>
+  <text x="600" y="500" text-anchor="middle" font-family="Georgia, serif" font-size="56" fill="#7a3050" font-style="italic">Wedding Guest Cards</text>
+  <text x="600" y="560" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="22" fill="#c9a84c" letter-spacing="6">A blessing card for every guest</text>
+  <text x="600" y="640" text-anchor="middle" font-family="Helvetica, sans-serif" font-size="16" fill="#6699cc" opacity="0.75">open-source template · replace this cover with your own image</text>
+</svg>

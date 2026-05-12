@@ -1,0 +1,194 @@
+.envelopeContainer {
+  position: relative;
+  width: 350px;
+  height: 240px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  perspective: 1000px;
+}
+
+.envelopeContainer:hover {
+  transform: scale(1.03);
+}
+
+.envelopeBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fff 0%, #f5f2ed 100%);
+  border-radius: 20px;
+  box-shadow: 0 15px 45px rgba(139, 115, 85, 0.15);
+}
+
+
+.envelopeFront {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  background: linear-gradient(135deg, #fff 0%, #faf9f7 100%);
+  border-radius: 0 0 20px 20px;
+  box-shadow: inset 0 2px 4px rgba(139, 115, 85, 0.08);
+}
+
+.envelopeFlap {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  top: 0;
+  background: linear-gradient(135deg, #e8c9a0 0%, #d4a574 100%);
+  border-radius: 20px 20px 0 0;
+  transform-origin: top center;
+  transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    95% 15%,
+    85% 35%,
+    75% 50%,
+    65% 65%,
+    55% 80%,
+    50% 85%,
+    45% 80%,
+    35% 65%,
+    25% 50%,
+    15% 35%,
+    5% 15%
+  );
+  z-index: 3;
+  box-shadow: 0 5px 20px rgba(212, 165, 116, 0.25);
+  overflow: visible;
+}
+
+.flapSticker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 16px;
+  border: 3px solid #8b7355;
+  box-shadow:
+    0 4px 15px rgba(139, 115, 85, 0.25),
+    inset 0 0 0 2px rgba(139, 115, 85, 0.1);
+  animation: gentleBounce 2s ease-in-out infinite;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  padding: 16px 24px;
+}
+
+.stickerInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stickerImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #8b7355;
+  background: #f5f2ed;
+}
+
+.stickerText {
+  text-align: center;
+  font-size: 1rem;
+  color: #9c8775;
+  font-weight: 500;
+  letter-spacing: 1px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.stickerText p:first-child {
+  font-size: 1.1rem;
+  color: #7a6957;
+}
+
+@keyframes gentleBounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-5px) scale(1.02);
+  }
+}
+
+.envelopeContainer.opening .envelopeFlap {
+  transform: rotateX(-180deg);
+}
+
+.envelopeContainer.opening .flapSticker {
+  opacity: 0;
+}
+
+.envelopeLetter {
+  position: absolute;
+  width: 90%;
+  height: 85%;
+  top: 7.5%;
+  left: 5%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(139, 115, 85, 0.15);
+  z-index: 1;
+  transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.2s,
+              z-index 0s 1.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  flex-direction: column;
+}
+
+.letterPreview {
+  width: 150px;
+  height: auto;
+  opacity: 0;
+  transform: scale(0.9);
+  filter: drop-shadow(0 4px 15px rgba(139, 115, 85, 0.2));
+  transition: opacity 0.5s ease 1.2s, transform 0.5s ease 1.2s;
+}
+
+.envelopeContainer.opening .envelopeLetter {
+  transform: translateY(-80%) scale(1.15);
+  z-index: 4;
+}
+
+.envelopeContainer.opening .letterPreview {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 響應式設計 */
+@media (max-width: 640px) {
+  .envelopeContainer {
+    width: 280px;
+    height: 192px;
+  }
+
+  .flapSticker {
+    padding: 12px 16px;
+  }
+
+  .stickerImage {
+    width: 50px;
+    height: 50px;
+  }
+
+  .stickerText {
+    font-size: 0.85rem;
+  }
+
+  .stickerText p:first-child {
+    font-size: 0.95rem;
+  }
+
+  .letterPreview {
+    width: 100px;
+  }
+}
