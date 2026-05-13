@@ -1,4 +1,4 @@
-import { RATE_LIMIT } from './constants';
+import { EMAIL_SEND, RATE_LIMIT } from './constants';
 
 // 本地開發使用記憶體儲存
 interface RateLimitEntry {
@@ -13,6 +13,7 @@ interface FailedAttemptEntry {
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
 const failedAttemptsStore = new Map<string, FailedAttemptEntry>();
+const emailQuotaStore = new Map<string, RateLimitEntry>();
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -114,9 +115,56 @@ export async function isTableBlocked(tableId: string): Promise<boolean> {
 }
 
 /**
+ * 檢查單一賓客的 Email 寄送配額
+ *
+ * 每個 guestId 在 EMAIL_SEND.WINDOW_MS 內最多 EMAIL_SEND.MAX_PER_GUEST 次。
+ * 防止攻擊者拿到 guestId 後把網站當 Gmail open relay 濫用。
+ *
+ * 注意：使用記憶體 store，serverless cold start 會重置 counter。
+ * 真要嚴格管控請改用 Vercel KV / Upstash Redis。
+ */
+export async function checkEmailSendQuota(
+  guestId: string
+): Promise<RateLimitResult> {
+  const now = Date.now();
+  const key = `email-quota:${guestId}`;
+
+  let entry = emailQuotaStore.get(key);
+
+  if (!entry || now > entry.resetAt) {
+    entry = {
+      count: 1,
+      resetAt: now + EMAIL_SEND.WINDOW_MS,
+    };
+    emailQuotaStore.set(key, entry);
+    return {
+      allowed: true,
+      remaining: EMAIL_SEND.MAX_PER_GUEST - 1,
+    };
+  }
+
+  entry.count++;
+
+  if (entry.count > EMAIL_SEND.MAX_PER_GUEST) {
+    return {
+      allowed: false,
+      retryAfter: Math.ceil((entry.resetAt - now) / 1000),
+    };
+  }
+
+  emailQuotaStore.set(key, entry);
+
+  return {
+    allowed: true,
+    remaining: EMAIL_SEND.MAX_PER_GUEST - entry.count,
+  };
+}
+
+/**
  * 清除 Rate Limit 資料 (測試用)
  */
 export async function clearRateLimitData(): Promise<void> {
   rateLimitStore.clear();
   failedAttemptsStore.clear();
+  emailQuotaStore.clear();
 }

@@ -41,6 +41,34 @@
 
 ---
 
+## ⚠️ 安全模型 / Threat Model（fork 前請看）
+
+這個 repo 是「**小規模、私下分享**」的婚禮工具，不是 SaaS。整體安全設計建立在以下假設上：
+
+- 卡片連結只透過 QR Code / 私訊發給賓客本人，**不會公開散播**到網路上
+- 賓客 ID 在你跑 `npm run import:guests` 後是隨機字串，外人猜不到
+- 賓客總數通常 < 200 人
+
+**已知的設計取捨**（這些對單場婚禮的場景沒實際風險，所以不修）：
+
+| 項目 | 行為 | 影響 |
+|------|------|------|
+| `/api/card-data/[guestId]` | 拿到 ID 就能讀，無 session 驗證 | 連結若外流，內容就外流 |
+| 賓客資料 / Rate limit | 存在記憶體（serverless cold start 會重置） | 統計失準、rate limit best-effort |
+| 「找不到賓客」回公版卡 / 「電話錯」回 NOT_FOUND | 錯誤訊息差異 | 可被用來測某姓名是否在名單上 |
+| `lib/db.ts` 賓客電話 | 明碼存記憶體 | 範例 repo 沒問題；真實名單請評估是否要 hash |
+
+**已加防護的部分**：
+
+- `POST /api/send-email` 加了同源檢查、單一賓客 24h 寄信配額、圖片大小上限，避免有人拿到 `guestId` 後把你的 Gmail 當 open relay 濫用
+- IP rate limit、honeypot、姓名格式驗證
+
+**如果你的場景不符合上面的假設**（要當 SaaS 跑、要存大量 PII、卡片連結會公開散播、不接受任何資料外流風險）：
+
+👉 **直接用 [card.oharalab.com](https://card.oharalab.com)**，我幫你處理 auth / DB / rate limit / 圖片儲存這些事。fork 自己改要補的東西比想像中多。
+
+---
+
 ## 給 AI 助手的快速摘要
 
 > 如果你（人類使用者）打算把這個 repo 丟給 AI（Claude / GPT / Cursor / Copilot 等）幫你完成自訂與部署，可以把下面這段話貼給 AI 作為任務描述：

@@ -12,7 +12,7 @@
 
 ## 技術架構
 
-- **框架**: Next.js 14+ (App Router)
+- **框架**: Next.js 16 (App Router)
 - **語言**: TypeScript
 - **樣式**: Tailwind CSS 4.x
 - **測試**: Vitest + Testing Library
