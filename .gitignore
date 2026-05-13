@@ -4,6 +4,7 @@ node_modules/
 
 # Next.js
 .next/
+.next.bak.*/
 out/
 build/
 
@@ -43,7 +44,7 @@ Thumbs.db
 next-env.d.ts
 
 # Demo video recording (local-only tool, not part of the public deliverable)
-.demo-video/output/
+.demo-video/
 
 # User's real guest data (after running npm run import:guests)
 lib/guests.json

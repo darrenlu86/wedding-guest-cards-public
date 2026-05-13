@@ -4,17 +4,14 @@ import DividerElegant from './DividerElegant';
 import CornerOrnament from './CornerOrnament';
 import { getCardTheme } from './cardTemplates';
 
-const DEFAULT_IMAGE = '/sample-cover.svg';
-
 interface BlessingCardProps {
   guest: Guest;
 }
 
 export default function BlessingCard({ guest }: BlessingCardProps) {
   const theme = getCardTheme(guest.customization.templateId);
-  const images = guest.customization.images && guest.customization.images.length > 0
-    ? guest.customization.images
-    : [DEFAULT_IMAGE];
+  const images = guest.customization.images ?? [];
+  const hasImages = images.length > 0;
 
   const paperTexture = `
     repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(45, 41, 37, 0.01) 2px, rgba(45, 41, 37, 0.01) 4px),
@@ -80,18 +77,20 @@ export default function BlessingCard({ guest }: BlessingCardProps) {
               boxShadow: theme.message.boxShadow,
             }}
           >
-            {/* 圖片區 */}
-            <div>
-              {images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`回憶 ${index + 1}`}
-                  crossOrigin="anonymous"
-                  className="w-full object-cover"
-                />
-              ))}
-            </div>
+            {/* 圖片區（無圖時不渲染，避免顯示空白佔位） */}
+            {hasImages && (
+              <div>
+                {images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`回憶 ${index + 1}`}
+                    crossOrigin="anonymous"
+                    className="w-full object-cover"
+                  />
+                ))}
+              </div>
+            )}
 
             {/* 祝福訊息 */}
             <div

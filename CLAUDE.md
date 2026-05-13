@@ -92,16 +92,16 @@ public/
 
 | ID | 姓名 | 電話 | 主題 | 圖片 |
 |----|------|------|------|------|
-| guest-sample-01 | 小明 | 0912000001 | classic | 1 張 |
-| guest-sample-02 | 小婷 | 0912000002 | classic | 2 張 |
-| guest-sample-03 | 玫君 | 0912000003 | rose | 0 |
-| guest-sample-04 | 思賢 | 0912000004 | rose | 1 張 |
-| guest-sample-05 | Alex Chen | 0912000005 | midnight | 1 張 |
-| guest-sample-06 | 佳穎 | 0912000006 | midnight | 2 張 |
-| guest-sample-07 | 志豪 | 0912000007 | spring | 0 |
-| guest-sample-08 | Jamie Lee | 0912000008 | spring | 1 張 |
-| guest-sample-09 | 怡君 | 0912000009 | luxe | 2 張 |
-| guest-sample-10 | 宏達 | 0912000010 | luxe | 1 張 |
+| guest-sample-01 | 小明 | 0912000001 | classic | 1 張（婚禮花束） |
+| guest-sample-02 | 小婷 | 0912000002 | classic | 1 張（婚戒） |
+| guest-sample-03 | 玫君 | 0912000003 | rose | 1 張（婚禮蛋糕） |
+| guest-sample-04 | 思賢 | 0912000004 | rose | 1 張（婚紗） |
+| guest-sample-05 | Alex Chen | 0912000005 | midnight | 1 張（儀式） |
+| guest-sample-06 | 佳穎 | 0912000006 | midnight | 1 張（敬酒） |
+| guest-sample-07 | 志豪 | 0912000007 | spring | 1 張（場地佈置） |
+| guest-sample-08 | Jamie Lee | 0912000008 | spring | 1 張（拱門） |
+| guest-sample-09 | 怡君 | 0912000009 | luxe | 1 張（宴客） |
+| guest-sample-10 | 宏達 | 0912000010 | luxe | 1 張（餐桌） |
 
 所有姓名、訊息、電話均為虛構，與任何真實人物無關。
 

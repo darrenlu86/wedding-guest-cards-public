@@ -61,7 +61,7 @@ export async function addGuest(guest: Guest): Promise<void> {
  * 建立 10 組範例賓客資料（開源範例）
  *
  * - 涵蓋 5 種主題各 2 位（classic / rose / midnight / spring / luxe）
- * - 圖片數量混合：無圖、1 張、2 張
+ * - 每張卡片各 1 張婚禮相關圖片
  * - 中英文姓名混合，方便測試多語場景
  *
  * 部署時請替換為自己的賓客名單。
@@ -96,10 +96,7 @@ export async function seedTestData(): Promise<void> {
 我們之前約好的那個旅行還沒去呢，看是今年下半年還是明年再來喬一下，總之不能再拖了哈哈哈。
 
 謝謝妳今天來，愛妳～`,
-        images: [
-          '/sample-images/sample-02.jpg',
-          '/sample-images/sample-01.jpg',
-        ],
+        images: ['/sample-images/sample-02.jpg'],
         templateId: 'classic',
       },
     },
@@ -115,7 +112,7 @@ export async function seedTestData(): Promise<void> {
 謝謝妳這幾年的陪伴，那些我講不出口的事情，妳大概是少數聽過的人。希望我們之後不論在哪個公司、做什麼工作，都還能繼續一起吐槽世界 :p
 
 祝幸福、平安！`,
-        images: [],
+        images: ['/sample-images/sample-03.jpg'],
         templateId: 'rose',
       },
     },
@@ -163,10 +160,7 @@ Take care, and let's grab a proper drink before the year ends.`,
 希望我們未來都能慢慢變得更從容一點，下次換我當妳的後盾的時候，可以像妳當時那樣穩。
 
 愛妳～`,
-        images: [
-          '/sample-images/sample-06.jpg',
-          '/sample-images/sample-05.jpg',
-        ],
+        images: ['/sample-images/sample-06.jpg'],
         templateId: 'midnight',
       },
     },
@@ -182,7 +176,7 @@ Take care, and let's grab a proper drink before the year ends.`,
 雖然現在我們不在同一間公司，但有什麼決定要做的時候還是會想找你聊一下，希望我們之後都保持這個習慣。
 
 身體顧好，下次換我請吃飯。`,
-        images: [],
+        images: ['/sample-images/sample-07.jpg'],
         templateId: 'spring',
       },
     },
@@ -214,10 +208,7 @@ See you next time, wherever that ends up being.`,
 很多很細碎的事情都謝謝妳家人這些年的照顧，這份心意我們都記得。未來不論搬到哪邊，我們都還是那種家人般的關係。
 
 愛妳，下次來家裡喝酒～`,
-        images: [
-          '/sample-images/sample-09.jpg',
-          '/sample-images/sample-10.jpg',
-        ],
+        images: ['/sample-images/sample-09.jpg'],
         templateId: 'luxe',
       },
     },

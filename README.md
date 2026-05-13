@@ -15,7 +15,7 @@
 - 看卡前會先有一個 **信封 3D 翻轉動畫**，賓客點一下，信封打開、卡片浮起來
 - 卡片可以下載成圖，或寄到自己的 email 收藏
 
-> 📺 影片預覽：可以參考 `.demo-video/output/wedding-card-demo.webm`（39 秒完整流程）
+> 📺 想看實際運作？clone 後跑 `npm install && npm run dev`，瀏覽器開 `http://localhost:3000`，用範例賓客「小明 / 0912000001」就能體驗完整流程。
 
 ---
 

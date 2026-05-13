@@ -12,7 +12,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "import:guests": "tsx scripts/import-guests.ts",
-    "init:data": "tsx scripts/init-data.ts"
+    "init:data": "tsx scripts/init-data.ts",
+    "repair:icloud": "bash scripts/repair-icloud-conflicts.sh"
   },
   "keywords": [
     "wedding",
