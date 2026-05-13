@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  checkRateLimit,
-  recordFailedAttempt,
-  clearRateLimitData,
-} from '@/lib/rate-limit';
+import { checkRateLimit, clearRateLimitData } from '@/lib/rate-limit';
 
 describe('Rate Limiting', () => {
   beforeEach(async () => {
@@ -40,35 +36,6 @@ describe('Rate Limiting', () => {
       const result = await checkRateLimit(ip);
       expect(result.allowed).toBe(false);
       expect(result.retryAfter).toBeGreaterThan(0);
-    });
-  });
-
-  describe('recordFailedAttempt', () => {
-    it('應該記錄失敗次數', async () => {
-      const tableId = 'table-1';
-
-      await recordFailedAttempt(tableId);
-      const count1 = await recordFailedAttempt(tableId);
-      expect(count1).toBe(2);
-    });
-
-    it('應該在達到限制時返回鎖定狀態', async () => {
-      const tableId = 'table-2';
-
-      // 記錄3次失敗
-      await recordFailedAttempt(tableId);
-      await recordFailedAttempt(tableId);
-      const count = await recordFailedAttempt(tableId);
-
-      expect(count).toBe(3);
-    });
-
-    it('不同桌號應該獨立計數', async () => {
-      await recordFailedAttempt('table-1');
-      await recordFailedAttempt('table-1');
-
-      const count2 = await recordFailedAttempt('table-2');
-      expect(count2).toBe(1);
     });
   });
 });

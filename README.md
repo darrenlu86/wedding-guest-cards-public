@@ -46,14 +46,15 @@
 這個 repo 是「**小規模、私下分享**」的婚禮工具，不是 SaaS。整體安全設計建立在以下假設上：
 
 - 卡片連結只透過 QR Code / 私訊發給賓客本人，**不會公開散播**到網路上
-- 賓客 ID 在你跑 `npm run import:guests` 後是隨機字串，外人猜不到
 - 賓客總數通常 < 200 人
+- 多一層防護：賓客必須輸入正確的 **姓名＋電話** 才能查到卡片（電話僅後端比對，不會出現在 URL 或 API 回應中）
 
 **已知的設計取捨**（這些對單場婚禮的場景沒實際風險，所以不修）：
 
 | 項目 | 行為 | 影響 |
 |------|------|------|
-| `/api/card-data/[guestId]` | 拿到 ID 就能讀，無 session 驗證 | 連結若外流，內容就外流 |
+| 賓客 ID 命名 | `scripts/import-guests.ts` 依姓名拼音 / slug 產生（e.g. `guest-yang-bo-xian`），**不是隨機字串** | 知道完整賓客名單的人可以枚舉 ID。電話驗證是主要防線 |
+| `/api/card-data/[guestId]` | 拿到 ID 就能讀卡片內容（已 strip 掉電話），無 session 驗證 | 連結若外流，卡片訊息／照片就外流 |
 | 賓客資料 / Rate limit | 存在記憶體（serverless cold start 會重置） | 統計失準、rate limit best-effort |
 | 「找不到賓客」回公版卡 / 「電話錯」回 NOT_FOUND | 錯誤訊息差異 | 可被用來測某姓名是否在名單上 |
 | `lib/db.ts` 賓客電話 | 明碼存記憶體 | 範例 repo 沒問題；真實名單請評估是否要 hash |

@@ -228,6 +228,25 @@ See you next time, wherever that ends up being.`,
         templateId: 'luxe',
       },
     },
+    // 公版卡片：名單外的人輸入姓名查詢時 fallback 到此。
+    // name 會在 card 頁面被 query param 的 ?name= 覆寫，
+    // 沒有 phone，所以 verify-guest 不會走電話比對分支。
+    {
+      id: 'guest-default',
+      name: '貴賓',
+      customization: {
+        message: `親愛的朋友，
+
+謝謝你今天來，這份心意我們都收到了。
+
+雖然我們沒能為你準備專屬的卡片，但你的出席對我們同樣重要。
+今天的每一個祝福，我們都記得。
+
+祝你幸福平安。`,
+        images: [],
+        templateId: 'classic',
+      },
+    },
   ];
 
   for (const guest of sampleGuests) {
