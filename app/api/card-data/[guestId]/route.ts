@@ -27,8 +27,15 @@ export async function GET(
       );
     }
 
-    // 返回賓客資料
-    return NextResponse.json({ guest }, { status: 200 });
+    // 只回傳前端顯示需要的欄位，剔除 phone / viewedAt / downloadedAt / emailSentAt，
+    // 避免有人拿到 guestId 後透過 API 撈到電話。
+    const publicGuest = {
+      id: guest.id,
+      name: guest.name,
+      customization: guest.customization,
+    };
+
+    return NextResponse.json({ guest: publicGuest }, { status: 200 });
   } catch (error) {
     console.error('Get card data error:', error);
     return NextResponse.json(

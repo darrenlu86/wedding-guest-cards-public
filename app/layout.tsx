@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 
-const SITE_URL = 'https://your-domain.example.com';
+// 部署時請設定 NEXT_PUBLIC_SITE_URL 環境變數（e.g. https://wedding.example.tw）。
+// metadata 在 build time 解析，所以 fallback 必須是合法 URL，
+// 否則 Next.js metadataBase 會 throw。
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://your-domain.example.com';
 const SITE_TITLE = 'Alex & Jamie — 婚禮感謝小卡';
 const SITE_DESCRIPTION = '謝謝你見證這一天，這張卡片送給你。每位賓客都有一張專屬的感謝小卡，掃描 QR Code 即可開啟。';
 

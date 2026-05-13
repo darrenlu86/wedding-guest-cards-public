@@ -2,8 +2,6 @@
 export const RATE_LIMIT = {
   MAX_ATTEMPTS: 5,
   WINDOW_MS: 60 * 1000, // 1 分鐘
-  BLOCK_DURATION_MS: 5 * 60 * 1000, // 5 分鐘
-  MAX_FAILED_ATTEMPTS: 3, // 同一桌號失敗次數
 };
 
 // Email 寄送配額（防止 Gmail 被當 open relay 濫用）

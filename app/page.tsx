@@ -13,6 +13,8 @@ export default function HomePage() {
   const router = useRouter();
   const [guestName, setGuestName] = useState('');
   const [phone, setPhone] = useState('');
+  // Honeypot：真實使用者不會填這個隱藏欄位，bot 填了會被後端 reject
+  const [website, setWebsite] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -45,6 +47,7 @@ export default function HomePage() {
         body: JSON.stringify({
           guestName: validation.sanitized,
           phone: trimmedPhone,
+          website,
         }),
       });
 
@@ -106,11 +109,13 @@ export default function HomePage() {
 
           {/* 表單 */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Honeypot 欄位 */}
+            {/* Honeypot 欄位（隱藏）— bot 填了會被後端拒絕 */}
             <input
               type="text"
               name="website"
               data-testid="honeypot-field"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
               style={{ display: 'none' }}
               tabIndex={-1}
               autoComplete="off"

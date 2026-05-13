@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer';
 
-const CARD_BASE_URL = 'https://your-domain.example.com';
+// 部署時請設定 NEXT_PUBLIC_SITE_URL（e.g. https://wedding.example.tw）。
+// 未設定 → 啟動 send-email 時 throw，避免寄出指向佔位網域的死連結。
+const PLACEHOLDER_SITE_URL = 'https://your-domain.example.com';
+const CARD_BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? PLACEHOLDER_SITE_URL;
 const SENDER_NAME = '來自Alex & Jamie的感謝';
 
 interface EmailConfig {
@@ -132,6 +135,12 @@ export async function sendWeddingCardEmail(
   cardPageUrl: string,
   cardImageBase64?: string
 ): Promise<void> {
+  if (CARD_BASE_URL === PLACEHOLDER_SITE_URL) {
+    throw new Error(
+      'NEXT_PUBLIC_SITE_URL 未設定。請在 .env.local 設定你的部署網域，否則寄出的卡片連結會指向佔位網域。'
+    );
+  }
+
   const config = getEmailConfig();
   const transporter = createTransporter(config);
 
