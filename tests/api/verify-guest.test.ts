@@ -13,21 +13,38 @@ describe('Verify Guest API', () => {
   it('應該成功驗證存在的賓客', async () => {
     const result = await verifyGuest({
       guestName: '小明',
+      phone: '0912000001',
       ip: 'test-ip-1',
       honeypot: '',
     });
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.guestId).toBeDefined();
-      expect(result.redirectUrl).toContain('/card/');
+      expect(result.guestId).toBe('guest-sample-01');
+      expect(result.redirectUrl).toContain('/card/guest-sample-01');
     }
   });
 
-  it('應該拒絕不存在的賓客', async () => {
+  it('找不到賓客時應導向公版卡片', async () => {
     const result = await verifyGuest({
       guestName: '不存在的人',
       ip: 'test-ip-2',
+      honeypot: '',
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.guestId).toBe('guest-default');
+      expect(result.redirectUrl).toContain('/card/guest-default');
+      expect(result.redirectUrl).toContain('name=');
+    }
+  });
+
+  it('姓名存在但電話不符應拒絕', async () => {
+    const result = await verifyGuest({
+      guestName: '小明',
+      phone: '0900000000',
+      ip: 'test-ip-2b',
       honeypot: '',
     });
 

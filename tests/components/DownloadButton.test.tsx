@@ -1,28 +1,37 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DownloadButton from '@/components/DownloadButton';
-import html2canvas from 'html2canvas';
+import { captureCardImage } from '@/lib/capture-card';
 
-// Mock html2canvas
-vi.mock('html2canvas');
+// 1x1 transparent PNG dataURL
+const FAKE_PNG =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+vi.mock('@/lib/capture-card', () => ({
+  captureCardImage: vi.fn(),
+}));
 
 describe('DownloadButton', () => {
   const mockGuestName = '小明';
   const mockCardElementId = 'test-card';
 
   beforeEach(() => {
-    // 創建測試用的卡片元素
     const cardElement = document.createElement('div');
     cardElement.id = mockCardElementId;
     cardElement.innerHTML = '<div>測試卡片內容</div>';
     document.body.appendChild(cardElement);
 
-    // 清除所有 mock
+    // 預設關閉 Web Share API，走 blob 下載路徑
+    delete (navigator as unknown as { share?: unknown }).share;
+    delete (navigator as unknown as { canShare?: unknown }).canShare;
+
+    global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
+    global.URL.revokeObjectURL = vi.fn();
+
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    // 清理測試元素
     const cardElement = document.getElementById(mockCardElementId);
     if (cardElement) {
       document.body.removeChild(cardElement);
@@ -39,29 +48,11 @@ describe('DownloadButton', () => {
 
     const button = screen.getByRole('button', { name: /下載卡片/i });
     expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('btn-primary');
+    expect(button).toHaveClass('download-button');
   });
 
-  it('應該顯示下載圖示', () => {
-    render(
-      <DownloadButton
-        guestName={mockGuestName}
-        cardElementId={mockCardElementId}
-      />
-    );
-
-    // 檢查按鈕內是否包含文字
-    expect(screen.getByText(/下載卡片/i)).toBeInTheDocument();
-  });
-
-  it('點擊按鈕時應該呼叫 html2canvas', async () => {
-    const mockCanvas = {
-      toBlob: vi.fn((callback) => {
-        callback(new Blob(['test'], { type: 'image/png' }));
-      }),
-    };
-
-    (html2canvas as any).mockResolvedValue(mockCanvas);
+  it('點擊按鈕時應該呼叫 captureCardImage', async () => {
+    vi.mocked(captureCardImage).mockResolvedValueOnce(FAKE_PNG);
 
     render(
       <DownloadButton
@@ -70,35 +61,38 @@ describe('DownloadButton', () => {
       />
     );
 
-    const button = screen.getByRole('button', { name: /下載卡片/i });
-    fireEvent.click(button);
+    fireEvent.click(screen.getByRole('button', { name: /下載卡片/i }));
 
     await waitFor(() => {
-      expect(html2canvas).toHaveBeenCalledWith(
-        expect.any(HTMLElement),
-        expect.objectContaining({
-          useCORS: true,
-          logging: false,
+      expect(captureCardImage).toHaveBeenCalledWith(mockCardElementId);
+    });
+  });
+
+  it('成功擷取後應該顯示下載成功訊息', async () => {
+    vi.mocked(captureCardImage).mockResolvedValueOnce(FAKE_PNG);
+
+    render(
+      <DownloadButton
+        guestName={mockGuestName}
+        cardElementId={mockCardElementId}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /下載卡片/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/下載成功/i)).toBeInTheDocument();
+    });
+  });
+
+  it('擷取期間按鈕應該顯示 loading 狀態', async () => {
+    let resolveCapture: (value: string) => void = () => {};
+    vi.mocked(captureCardImage).mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveCapture = resolve;
         })
-      );
-    });
-  });
-
-  it('應該生成正確的檔案名稱', async () => {
-    const mockCanvas = {
-      toBlob: vi.fn((callback) => {
-        callback(new Blob(['test'], { type: 'image/png' }));
-      }),
-    };
-
-    (html2canvas as any).mockResolvedValue(mockCanvas);
-
-    // Mock URL.createObjectURL 和 createElement
-    const mockUrl = 'blob:test-url';
-    global.URL.createObjectURL = vi.fn(() => mockUrl);
-    global.URL.revokeObjectURL = vi.fn();
-
-    const createElementSpy = vi.spyOn(document, 'createElement');
+    );
 
     render(
       <DownloadButton
@@ -110,66 +104,40 @@ describe('DownloadButton', () => {
     const button = screen.getByRole('button', { name: /下載卡片/i });
     fireEvent.click(button);
 
-    await waitFor(() => {
-      const calls = createElementSpy.mock.calls.filter(call => call[0] === 'a');
-      expect(calls.length).toBeGreaterThan(0);
-    });
-
-    // 驗證下載連結的檔案名稱
-    await waitFor(() => {
-      expect(mockCanvas.toBlob).toHaveBeenCalled();
-    });
-
-    createElementSpy.mockRestore();
-  });
-
-  it('應該顯示 loading 狀態', async () => {
-    const mockCanvas = {
-      toBlob: vi.fn((callback) => {
-        setTimeout(() => {
-          callback(new Blob(['test'], { type: 'image/png' }));
-        }, 100);
-      }),
-    };
-
-    (html2canvas as any).mockImplementation(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(mockCanvas);
-        }, 50);
-      });
-    });
-
-    render(
-      <DownloadButton
-        guestName={mockGuestName}
-        cardElementId={mockCardElementId}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /下載卡片/i });
-    fireEvent.click(button);
-
-    // 檢查 loading 狀態
     await waitFor(() => {
       expect(button).toBeDisabled();
-    });
-
-    await waitFor(() => {
       expect(screen.getByText(/下載中/i)).toBeInTheDocument();
     });
 
-    // 等待完成
+    resolveCapture(FAKE_PNG);
+
     await waitFor(() => {
       expect(button).not.toBeDisabled();
-    }, { timeout: 3000 });
+    });
   });
 
-  it('應該在錯誤時顯示錯誤訊息', async () => {
-    (html2canvas as any).mockRejectedValue(new Error('Canvas error'));
+  it('擷取失敗（回傳 undefined）應該顯示錯誤訊息', async () => {
+    vi.mocked(captureCardImage).mockResolvedValueOnce(undefined);
 
-    // Mock console.error 避免測試輸出錯誤訊息
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(
+      <DownloadButton
+        guestName={mockGuestName}
+        cardElementId={mockCardElementId}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /下載卡片/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/截圖失敗/i)).toBeInTheDocument();
+    });
+  });
+
+  it('擷取拋出錯誤應該顯示下載失敗訊息', async () => {
+    vi.mocked(captureCardImage).mockRejectedValueOnce(new Error('boom'));
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     render(
       <DownloadButton
@@ -184,45 +152,14 @@ describe('DownloadButton', () => {
     await waitFor(() => {
       expect(screen.getByText(/下載失敗/i)).toBeInTheDocument();
     });
-
-    // 按鈕應該重新啟用
     expect(button).not.toBeDisabled();
 
     consoleErrorSpy.mockRestore();
   });
 
-  it('當卡片元素不存在時應該顯示錯誤', async () => {
-    // Mock console.error 避免測試輸出錯誤訊息
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    render(
-      <DownloadButton
-        guestName={mockGuestName}
-        cardElementId="non-existent-id"
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /下載卡片/i });
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(screen.getByText(/找不到卡片元素/i)).toBeInTheDocument();
-    });
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('應該在成功後顯示成功訊息', async () => {
-    const mockCanvas = {
-      toBlob: vi.fn((callback) => {
-        callback(new Blob(['test'], { type: 'image/png' }));
-      }),
-    };
-
-    (html2canvas as any).mockResolvedValue(mockCanvas);
-
-    global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
-    global.URL.revokeObjectURL = vi.fn();
+  it('成功後 3 秒應該清除訊息', async () => {
+    vi.useFakeTimers();
+    vi.mocked(captureCardImage).mockResolvedValueOnce(FAKE_PNG);
 
     render(
       <DownloadButton
@@ -231,45 +168,19 @@ describe('DownloadButton', () => {
       />
     );
 
-    const button = screen.getByRole('button', { name: /下載卡片/i });
-    fireEvent.click(button);
+    fireEvent.click(screen.getByRole('button', { name: /下載卡片/i }));
 
-    await waitFor(() => {
-      expect(screen.getByText(/下載成功/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
-  });
-
-  it('應該在指定時間後清除訊息', async () => {
-    const mockCanvas = {
-      toBlob: vi.fn((callback) => {
-        callback(new Blob(['test'], { type: 'image/png' }));
-      }),
-    };
-
-    (html2canvas as any).mockResolvedValue(mockCanvas);
-
-    global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
-    global.URL.revokeObjectURL = vi.fn();
-
-    render(
-      <DownloadButton
-        guestName={mockGuestName}
-        cardElementId={mockCardElementId}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /下載卡片/i });
-    fireEvent.click(button);
-
-    // 等待下載成功訊息出現
-    await waitFor(() => {
+    // 用 real timers 等成功訊息出現，再切到 fake timers 推進清除時間
+    await vi.waitFor(() => {
       expect(screen.getByText(/下載成功/i)).toBeInTheDocument();
     });
 
-    // 等待 3 秒後訊息應該消失
-    await new Promise(resolve => setTimeout(resolve, 3100));
+    vi.advanceTimersByTime(3500);
 
-    // 檢查訊息是否已清除
-    expect(screen.queryByText(/下載成功/i)).not.toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(screen.queryByText(/下載成功/i)).not.toBeInTheDocument();
+    });
+
+    vi.useRealTimers();
   });
 });
