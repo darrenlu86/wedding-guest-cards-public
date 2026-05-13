@@ -115,19 +115,25 @@ export async function isTableBlocked(tableId: string): Promise<boolean> {
 }
 
 /**
- * 檢查單一賓客的 Email 寄送配額
+ * 檢查 Email 寄送配額
  *
- * 每個 guestId 在 EMAIL_SEND.WINDOW_MS 內最多 EMAIL_SEND.MAX_PER_GUEST 次。
- * 防止攻擊者拿到 guestId 後把網站當 Gmail open relay 濫用。
+ * 兩種計算方式：
+ * - 真實賓客（非 guest-default）：以 guestId 為 key，保護「單一賓客 ID 不被洗版」
+ * - 公版卡片（guest-default）：以 IP 為 key，避免「一個輸錯名字的賓客把整站額度用完」
+ *   合法訪客來自不同 IP 互不影響；攻擊者單 IP 一天最多 EMAIL_SEND.MAX_PER_GUEST 次。
  *
  * 注意：使用記憶體 store，serverless cold start 會重置 counter。
  * 真要嚴格管控請改用 Vercel KV / Upstash Redis。
  */
 export async function checkEmailSendQuota(
-  guestId: string
+  guestId: string,
+  ip?: string
 ): Promise<RateLimitResult> {
   const now = Date.now();
-  const key = `email-quota:${guestId}`;
+  const key =
+    guestId === 'guest-default'
+      ? `email-quota:guest-default:${ip ?? 'unknown'}`
+      : `email-quota:${guestId}`;
 
   let entry = emailQuotaStore.get(key);
 

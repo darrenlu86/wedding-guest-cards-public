@@ -136,8 +136,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SendEmail
       );
     }
 
-    // Per-guest 配額（每個 guestId 24h 上限）
-    const quotaResult = await checkEmailSendQuota(guestId);
+    // Email 配額（真實賓客按 guestId、公版卡片按 IP）
+    const quotaResult = await checkEmailSendQuota(guestId, ip);
     if (!quotaResult.allowed) {
       return NextResponse.json(
         {
