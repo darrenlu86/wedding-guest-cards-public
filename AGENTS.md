@@ -1,4 +1,4 @@
-# Claude Code 專案筆記（開源範例版）
+# 專案指引（開源範例版，AGENTS.md）
 
 ## 部署平台：Vercel
 
